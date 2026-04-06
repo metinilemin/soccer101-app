@@ -1,0 +1,1986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SOCCER101 — World Cup 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ── TOKENS ───────────────────────────────────────────────── */
+:root {
+  --bg:       #05091a;
+  --bg2:      #080d22;
+  --card:     #0c1230;
+  --border:   #1a2545;
+  --border2:  #243060;
+  --red:      #e63946;
+  --red-dim:  rgba(230,57,70,.12);
+  --blue:     #1d72b8;
+  --blue-dim: rgba(29,114,184,.12);
+  --blue2:    #2563eb;
+  --white:    #f0f4ff;
+  --muted:    #5a6a8a;
+  --muted2:   #8a9ab8;
+  --gold:     #f4a430;
+  --gold-dim: rgba(244,164,48,.12);
+  --green:    #22c55e;
+  --nav:      rgba(5,9,26,.97);
+  --shadow:   0 8px 32px rgba(0,0,0,.6);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { background: var(--bg); color: var(--white); font-family: 'DM Sans', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 36px 16px 60px; }
+
+/* ── OUTER CHROME ───────────────────────────────────────── */
+.top-bar { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 980px; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+.top-bar h1 { font-family: 'Bebas Neue', cursive; font-size: 26px; letter-spacing: 3px; background: linear-gradient(90deg, var(--red), var(--blue2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.nav-pills { display: flex; gap: 5px; flex-wrap: wrap; }
+.np { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; font-size: 10px; color: var(--muted); cursor: pointer; transition: all .2s; font-weight: 700; white-space: nowrap; }
+.np:hover, .np.on { background: var(--red-dim); border-color: var(--red); color: var(--red); }
+
+/* ── STAGE ──────────────────────────────────────────────── */
+.stage { display: flex; gap: 36px; align-items: flex-start; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 980px; }
+
+/* ── PHONE ──────────────────────────────────────────────── */
+.phone { width: 375px; height: 812px; background: #000; border-radius: 52px; box-shadow: 0 0 0 2px #1c2545, 0 0 0 7px #080d22, 0 40px 80px rgba(0,0,0,.85), inset 0 0 0 1px rgba(255,255,255,.04); position: relative; overflow: hidden; flex-shrink: 0; }
+.phone::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 124px; height: 32px; background: #000; border-radius: 0 0 20px 20px; z-index: 200; }
+.pscreen { position: absolute; inset: 0; border-radius: 52px; overflow: hidden; background: var(--bg); }
+
+/* ── STATUS BAR ─────────────────────────────────────────── */
+.sb { height: 44px; padding: 13px 22px 0; display: flex; justify-content: space-between; align-items: center; position: absolute; top: 0; left: 0; right: 0; z-index: 99; }
+.sb-t { font-size: 15px; font-weight: 700; color: #fff; }
+.sb-i { font-size: 11px; color: #fff; }
+
+/* ── SCREEN BASE ────────────────────────────────────────── */
+.scr { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity .22s; display: flex; flex-direction: column; overflow: hidden; }
+.scr.on { opacity: 1; pointer-events: all; }
+.pad44 { height: 44px; flex-shrink: 0; }
+
+/* ── SCROLL ─────────────────────────────────────────────── */
+.sa { overflow-y: auto; padding: 10px 15px 82px; flex: 1; }
+.sa::-webkit-scrollbar { display: none; }
+
+/* ── SHARED BOTTOM NAV ──────────────────────────────────── */
+.bnav { position: absolute; bottom: 0; left: 0; right: 0; height: 78px; background: var(--nav); backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; align-items: flex-start; padding-top: 9px; z-index: 50; }
+.ni { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; padding: 3px 0; }
+.ni-ico { font-size: 20px; }
+.ni-lbl { font-size: 9px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; }
+.ni.on .ni-lbl { color: var(--red); }
+.ni.off .ni-lbl { color: var(--muted); }
+.ni-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--red); opacity: 0; }
+.ni.on .ni-dot { opacity: 1; }
+
+/* ── SHARED HEADER ──────────────────────────────────────── */
+.shdr { padding: 12px 18px 11px; display: flex; align-items: center; gap: 11px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.shdr-title { font-family: 'Bebas Neue', cursive; font-size: 21px; letter-spacing: 2px; color: var(--white); }
+.back { width: 33px; height: 33px; background: var(--card); border: 1px solid var(--border); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; cursor: pointer; flex-shrink: 0; }
+.sec { font-size: 10px; font-weight: 700; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin: 13px 3px 8px; }
+
+/* ── ANIMATIONS ─────────────────────────────────────────── */
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .2; } }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes scanline { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+@keyframes stars { 0%,100% { opacity: .4; } 50% { opacity: 1; } }
+
+/* ══════════════════════════════════════════════════════════
+   SPLASH
+══════════════════════════════════════════════════════════ */
+#s-splash {
+  background: linear-gradient(160deg, #0a0f2e 0%, #1a0a12 50%, #05091a 100%);
+}
+.splash-stars {
+  position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+  background-image: radial-gradient(1px 1px at 20% 15%, rgba(255,255,255,.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 70% 25%, rgba(255,255,255,.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 40% 60%, rgba(255,255,255,.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 85% 70%, rgba(255,255,255,.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 15% 80%, rgba(255,255,255,.4) 0%, transparent 100%),
+    radial-gradient(2px 2px at 60% 10%, rgba(255,255,255,.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 30% 45%, rgba(255,255,255,.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,.4) 0%, transparent 100%);
+}
+.spl-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 28px 36px; min-height: 768px; position: relative; }
+.spl-flag-stripe { position: absolute; bottom: 0; left: 0; right: 0; height: 5px; background: linear-gradient(90deg, var(--red) 0%, var(--red) 33%, #fff 33%, #fff 66%, var(--blue2) 66%); opacity: .4; }
+.spl-badge { font-size: 10px; letter-spacing: 4px; color: var(--blue2); font-weight: 700; margin-bottom: 10px; opacity: .9; text-transform: uppercase; }
+.spl-ball { font-size: 56px; margin-bottom: 12px; filter: drop-shadow(0 0 20px rgba(230,57,70,.5)); animation: float 3s ease-in-out infinite; }
+.spl-logo { font-family: 'Bebas Neue', cursive; font-size: 58px; letter-spacing: 5px; line-height: 1; color: #fff; margin-bottom: 3px; }
+.spl-logo span { color: var(--red); }
+.spl-tag { font-size: 12px; color: var(--muted2); text-align: center; line-height: 1.7; margin-bottom: 36px; margin-top: 6px; }
+.btn-red { width: 100%; background: var(--red); color: #fff; border: none; border-radius: 14px; padding: 16px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; margin-bottom: 9px; transition: transform .14s, background .2s; letter-spacing: .3px; }
+.btn-red:hover { background: #c9303c; }
+.btn-red:active { transform: scale(.97); }
+.btn-ghost { width: 100%; background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: 14px; padding: 14px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all .2s; }
+.btn-ghost:hover { border-color: var(--border2); color: var(--muted2); }
+.spl-terms { font-size: 10px; color: var(--muted); text-align: center; margin-top: 14px; line-height: 1.6; }
+
+/* ══════════════════════════════════════════════════════════
+   ONBOARDING
+══════════════════════════════════════════════════════════ */
+#s-onboard { overflow: hidden; background: var(--bg); }
+.ob-step { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity .28s; display: flex; flex-direction: column; }
+.ob-step.on { opacity: 1; pointer-events: all; }
+.ob-dots { display: flex; gap: 6px; justify-content: center; padding: 12px 0 0; flex-shrink: 0; }
+.ob-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: all .3s; }
+.ob-dot.on { background: var(--red); width: 18px; border-radius: 3px; }
+
+.ob1-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px 26px 16px; }
+.ob1-icon { font-size: 50px; margin-bottom: 12px; animation: float 3s ease-in-out infinite; }
+.ob1-title { font-family: 'Bebas Neue', cursive; font-size: 32px; letter-spacing: 3px; color: var(--white); text-align: center; line-height: 1.1; margin-bottom: 8px; }
+.ob1-title span { color: var(--red); }
+.ob1-sub { font-size: 13px; color: var(--muted2); text-align: center; line-height: 1.7; margin-bottom: 28px; }
+.ob1-features { width: 100%; display: flex; flex-direction: column; gap: 9px; margin-bottom: 28px; }
+.ob1-feat { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 11px 13px; display: flex; align-items: center; gap: 11px; }
+.ob1-feat-ico { font-size: 20px; flex-shrink: 0; }
+.ob1-feat-txt strong { color: var(--white); display: block; font-size: 12px; }
+.ob1-feat-txt span { font-size: 11px; color: var(--muted); }
+
+.ob2-body { flex: 1; overflow-y: auto; padding: 6px 14px 10px; }
+.ob2-body::-webkit-scrollbar { display: none; }
+.ob2-title { font-family: 'Bebas Neue', cursive; font-size: 24px; letter-spacing: 2px; color: var(--white); margin-bottom: 3px; }
+.ob2-sub { font-size: 11px; color: var(--muted); margin-bottom: 12px; }
+.ob2-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 12px; }
+.ob2-team { background: var(--card); border: 1px solid var(--border); border-radius: 11px; padding: 11px 9px; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; transition: all .2s; position: relative; }
+.ob2-team.sel { background: var(--red-dim); border-color: rgba(230,57,70,.4); }
+.ob2-flag { font-size: 28px; }
+.ob2-name { font-size: 10px; font-weight: 600; color: var(--muted2); text-align: center; }
+.ob2-team.sel .ob2-name { color: var(--white); }
+.ob2-check { position: absolute; top: 5px; right: 7px; font-size: 11px; color: var(--red); opacity: 0; }
+.ob2-team.sel .ob2-check { opacity: 1; }
+
+.ob3-body { flex: 1; display: flex; flex-direction: column; padding: 6px 14px 10px; }
+.ob3-title { font-family: 'Bebas Neue', cursive; font-size: 24px; letter-spacing: 2px; color: var(--white); margin-bottom: 3px; }
+.ob3-sub { font-size: 11px; color: var(--muted); margin-bottom: 14px; }
+.ob3-rows { display: flex; flex-direction: column; gap: 7px; margin-bottom: 18px; }
+.ob3-row { background: var(--card); border: 1px solid var(--border); border-radius: 11px; padding: 11px 13px; display: flex; align-items: center; justify-content: space-between; gap: 9px; }
+.ob3-left { display: flex; align-items: center; gap: 9px; }
+.ob3-ico { font-size: 17px; }
+.ob3-txt { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 1px; }
+.ob3-sub2 { font-size: 10px; color: var(--muted); }
+.tog { width: 42px; height: 23px; background: var(--border); border-radius: 12px; position: relative; cursor: pointer; transition: background .25s; flex-shrink: 0; }
+.tog.on { background: var(--red); }
+.tog::after { content: ''; position: absolute; top: 2px; left: 2px; width: 19px; height: 19px; background: #fff; border-radius: 50%; transition: transform .25s; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+.tog.on::after { transform: translateX(19px); }
+.ob-footer { padding: 12px 14px 18px; flex-shrink: 0; }
+
+/* ══════════════════════════════════════════════════════════
+   HOME
+══════════════════════════════════════════════════════════ */
+#s-home { background: var(--bg); }
+.h-top { padding: 10px 17px 0; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+.h-logo { font-family: 'Bebas Neue', cursive; font-size: 22px; letter-spacing: 3px; color: #fff; }
+.h-logo span { color: var(--red); }
+.h-icons { display: flex; gap: 6px; }
+.ico-btn { width: 33px; height: 33px; background: var(--card); border: 1px solid var(--border); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; transition: border-color .2s; }
+.ico-btn:hover { border-color: var(--border2); }
+
+/* USA banner */
+.usa-banner { margin: 8px 17px 0; background: linear-gradient(90deg, rgba(230,57,70,.15), rgba(37,99,235,.15)); border: 1px solid rgba(230,57,70,.2); border-radius: 11px; padding: 8px 13px; display: flex; align-items: center; gap: 8px; overflow: hidden; flex-shrink: 0; position: relative; }
+.usa-banner::before { content: '🇺🇸'; position: absolute; right: 10px; font-size: 28px; opacity: .15; }
+.ldot { width: 7px; height: 7px; background: var(--red); border-radius: 50%; flex-shrink: 0; animation: blink 1.3s infinite; }
+.ticker-txt { font-size: 11px; color: var(--red); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: .3px; }
+.ticker-score { margin-left: auto; background: var(--red-dim); border: 1px solid rgba(230,57,70,.3); border-radius: 7px; padding: 2px 8px; font-family: 'DM Mono', monospace; font-size: 12px; color: var(--red); flex-shrink: 0; }
+
+/* tabs */
+.tabs { display: flex; padding: 7px 17px 0; gap: 5px; overflow-x: auto; flex-shrink: 0; }
+.tabs::-webkit-scrollbar { display: none; }
+.tc { flex-shrink: 0; padding: 6px 14px; border-radius: 18px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s; border: 1px solid transparent; }
+.tc.on { background: var(--red-dim); border-color: var(--red); color: var(--red); }
+.tc.off { background: var(--card); color: var(--muted); }
+
+/* match card */
+.mc { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 9px; cursor: pointer; transition: border-color .2s, transform .14s; position: relative; overflow: hidden; }
+.mc:active { transform: scale(.988); }
+.mc.lv { border-color: rgba(230,57,70,.35); }
+.mc-bar { position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--red), var(--blue2)); }
+.mc-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 9px; }
+.mc-rnd { font-size: 10px; font-weight: 600; letter-spacing: .8px; color: var(--muted); text-transform: uppercase; }
+.bdg { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 18px; letter-spacing: .4px; }
+.bdg.live { background: var(--red-dim); color: var(--red); border: 1px solid rgba(230,57,70,.3); }
+.bdg.ft { background: var(--border); color: var(--muted); }
+.bdg.ns { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(244,164,48,.25); }
+.mc-body { display: flex; align-items: center; justify-content: space-between; }
+.mc-team { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.mc-flag { font-size: 25px; }
+.mc-name { font-size: 10px; font-weight: 600; color: var(--muted2); text-align: center; }
+.mc-ctr { display: flex; flex-direction: column; align-items: center; padding: 0 6px; }
+.mc-score { font-family: 'Bebas Neue', cursive; font-size: 40px; color: #fff; letter-spacing: 5px; line-height: 1; }
+.mc-vs { font-family: 'Bebas Neue', cursive; font-size: 22px; color: var(--muted); letter-spacing: 3px; }
+.mc-min { font-size: 10px; color: var(--red); font-weight: 700; letter-spacing: .8px; margin-top: 2px; }
+.mc-min.ftlbl { color: var(--muted); }
+.mc-evs { margin-top: 8px; border-top: 1px solid var(--border); padding-top: 7px; display: flex; flex-direction: column; gap: 4px; }
+.mc-ev { display: flex; align-items: center; gap: 6px; font-size: 11px; }
+.ev-m { color: var(--gold); font-family: 'DM Mono', monospace; font-size: 10px; min-width: 28px; }
+.ev-t { color: var(--muted2); }
+.ev-t.g { color: var(--white); }
+
+/* ══════════════════════════════════════════════════════════
+   MATCH DETAIL
+══════════════════════════════════════════════════════════ */
+.mhero { background: linear-gradient(150deg, #12051a 0%, #05091a 65%); padding: 10px 17px 15px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.mh-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.mh-rnd { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: 1.2px; text-transform: uppercase; }
+.mh-live { background: var(--red-dim); border: 1px solid rgba(230,57,70,.3); border-radius: 18px; padding: 3px 9px; font-size: 10px; font-weight: 700; color: var(--red); display: flex; align-items: center; gap: 4px; }
+.mh-row { display: flex; align-items: center; justify-content: space-between; }
+.mh-team { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.mh-flag { font-size: 32px; }
+.mh-tn { font-size: 11px; font-weight: 600; color: var(--muted2); text-align: center; }
+.mh-sc { font-family: 'Bebas Neue', cursive; font-size: 58px; color: #fff; letter-spacing: 7px; line-height: 1; display: flex; align-items: center; }
+.mh-sep { color: var(--muted); font-size: 32px; margin: 0 2px; }
+.mh-venue { font-size: 10px; color: var(--muted); text-align: center; margin-top: 4px; }
+
+.mtabs-strip { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; overflow-x: auto; }
+.mtabs-strip::-webkit-scrollbar { display: none; }
+.mt { flex-shrink: 0; padding: 10px 13px; font-size: 11px; font-weight: 700; letter-spacing: .4px; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s; text-transform: uppercase; white-space: nowrap; }
+.mt.on { color: var(--red); border-bottom-color: var(--red); }
+
+.ei { display: flex; align-items: flex-start; gap: 9px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+.ei-min { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gold); font-weight: 500; min-width: 30px; margin-top: 2px; }
+.ei-ico { font-size: 16px; flex-shrink: 0; }
+.ei-ttl { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 1px; }
+.ei-sub { font-size: 11px; color: var(--muted); }
+
+.sr { margin-bottom: 13px; }
+.sl { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.sb2 { height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; position: relative; }
+.sf { position: absolute; top: 0; left: 0; height: 100%; background: linear-gradient(90deg, var(--red), var(--blue2)); border-radius: 4px; }
+
+.lu-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; padding: 7px 11px; background: var(--card); border-radius: 9px; border: 1px solid var(--border); }
+.lu-t { font-size: 12px; font-weight: 700; color: var(--white); }
+.lu-f { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--blue2); }
+.prow { display: flex; align-items: center; gap: 7px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+.p-n { width: 20px; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); text-align: center; }
+.p-pos { width: 24px; height: 16px; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 7px; font-weight: 700; }
+.gk { background: rgba(34,197,94,.15); color: var(--green); }
+.df { background: rgba(37,99,235,.15); color: var(--blue2); }
+.mf { background: rgba(167,139,250,.15); color: #a78bfa; }
+.fw { background: rgba(230,57,70,.15); color: var(--red); }
+.p-nm { flex: 1; font-size: 12px; font-weight: 500; color: var(--white); cursor: pointer; transition: color .2s; }
+.p-nm:hover { color: var(--red); }
+.p-rt { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700; }
+
+.cfc { border-radius: 13px; padding: 13px 14px; margin-bottom: 9px; position: relative; overflow: hidden; }
+.cfc-bg { position: absolute; inset: 0; opacity: .05; font-size: 88px; display: flex; align-items: center; justify-content: center; pointer-events: none; filter: blur(3px); }
+.cfc-hdr { display: flex; align-items: center; gap: 7px; margin-bottom: 8px; }
+.cfc-flag { font-size: 20px; }
+.cfc-cn { font-size: 12px; font-weight: 700; color: var(--white); }
+.cfc-tag { margin-left: auto; font-size: 8px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 2px 7px; border-radius: 9px; }
+.cfc-facts { display: flex; flex-direction: column; gap: 5px; }
+.cfc-f { display: flex; align-items: flex-start; gap: 7px; font-size: 11px; line-height: 1.5; }
+.cfc-fi { flex-shrink: 0; font-size: 13px; }
+.cfc-ft { color: var(--muted2); }
+.cfc-ft strong { color: var(--white); }
+
+/* ══════════════════════════════════════════════════════════
+   BRACKET
+══════════════════════════════════════════════════════════ */
+.bracket-outer { overflow-x: auto; padding: 10px 0 82px; flex: 1; }
+.bracket-outer::-webkit-scrollbar { height: 3px; }
+.bracket-outer::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+.bracket-inner { display: flex; min-width: 880px; padding: 0 14px; }
+.br-col { flex: 1; display: flex; flex-direction: column; min-width: 128px; }
+.br-col-title { font-family: 'Bebas Neue', cursive; font-size: 12px; letter-spacing: 1.5px; color: var(--blue2); text-align: center; padding: 0 4px 11px; text-transform: uppercase; }
+.br-col-title .br-date { font-family: 'DM Sans', sans-serif; font-size: 9px; font-weight: 400; color: var(--muted); letter-spacing: 0; display: block; margin-top: 1px; }
+.br-slots { display: flex; flex-direction: column; flex: 1; }
+.br-slot { background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin: 2px 4px; padding: 8px 10px; display: flex; flex-direction: column; gap: 3px; flex: 1; cursor: pointer; transition: border-color .2s; }
+.br-slot:hover { border-color: var(--border2); }
+.br-slot.hl { border-color: rgba(230,57,70,.4); background: rgba(230,57,70,.05); }
+.br-slot.win { border-color: rgba(34,197,94,.3); background: rgba(34,197,94,.04); }
+.br-t { font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600; color: var(--white); display: flex; justify-content: space-between; }
+.br-t.tbd { color: var(--muted); font-weight: 400; }
+.br-sc { color: var(--gold); font-family: 'DM Mono', monospace; font-size: 11px; }
+.br-div { height: 1px; background: var(--border); margin: 1px 0; }
+.br-dt { font-size: 9px; color: var(--muted); margin-top: 1px; }
+.final-slot { background: linear-gradient(135deg, rgba(230,57,70,.08), rgba(37,99,235,.08)); border: 1px solid rgba(230,57,70,.4); border-radius: 10px; margin: 2px 4px; padding: 12px; flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 3px; }
+.trophy-big { text-align: center; font-size: 26px; margin-bottom: 5px; }
+.br-note { font-size: 10px; color: var(--muted); text-align: center; padding: 6px 14px 0; flex-shrink: 0; }
+
+/* ══════════════════════════════════════════════════════════
+   PLAYER
+══════════════════════════════════════════════════════════ */
+.player-switch { display: flex; gap: 6px; padding: 9px 17px 0; flex-shrink: 0; overflow-x: auto; }
+.player-switch::-webkit-scrollbar { display: none; }
+.ps-chip { flex-shrink: 0; background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 5px 11px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all .2s; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+.ps-chip.on { background: var(--red-dim); border-color: rgba(230,57,70,.4); color: var(--red); }
+
+.player-hero { background: linear-gradient(150deg, #120515 0%, var(--bg) 60%); padding: 12px 17px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.ph-top { display: flex; align-items: center; gap: 11px; margin-bottom: 13px; }
+.ph-avatar { width: 66px; height: 66px; border-radius: 15px; background: linear-gradient(135deg, var(--card), var(--border)); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 34px; flex-shrink: 0; }
+.ph-name { font-family: 'Bebas Neue', cursive; font-size: 25px; letter-spacing: 2px; color: #fff; line-height: 1; }
+.ph-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.ph-pos-badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 1px; padding: 2px 9px; border-radius: 9px; margin-top: 4px; }
+.ph-stats-row { display: flex; gap: 7px; }
+.ph-stat { flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 8px 7px; text-align: center; }
+.ph-stat-val { font-family: 'Bebas Neue', cursive; font-size: 24px; color: #fff; line-height: 1; }
+.ph-stat-val.red { color: var(--red); }
+.ph-stat-lbl { font-size: 9px; font-weight: 700; letter-spacing: .8px; color: var(--muted); text-transform: uppercase; margin-top: 2px; }
+
+.ptabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.pt { flex: 1; padding: 10px 0; font-size: 11px; font-weight: 700; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s; text-transform: uppercase; text-align: center; }
+.pt.on { color: var(--red); border-bottom-color: var(--red); }
+
+.bio-card { background: var(--card); border: 1px solid var(--border); border-radius: 11px; padding: 12px 13px; margin-bottom: 8px; }
+.bc-title { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: var(--blue2); text-transform: uppercase; margin-bottom: 8px; }
+.bc-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+.bc-row:last-child { border-bottom: none; }
+.bc-key { color: var(--muted); }
+.bc-val { color: var(--white); font-weight: 600; }
+
+.ci-item { display: flex; align-items: flex-start; gap: 9px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+.ci-year { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gold); font-weight: 500; min-width: 34px; margin-top: 2px; }
+.ci-ico { font-size: 15px; flex-shrink: 0; }
+.ci-ttl { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 1px; }
+.ci-sub { font-size: 11px; color: var(--muted); }
+
+.fp { background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--red); border-radius: 11px; padding: 11px 13px; margin-bottom: 8px; }
+.fp-txt { font-size: 12px; color: var(--muted2); line-height: 1.65; }
+.fp-txt strong { color: var(--white); }
+
+/* ══════════════════════════════════════════════════════════
+   STANDINGS
+══════════════════════════════════════════════════════════ */
+.group-blk { background: var(--card); border: 1px solid var(--border); border-radius: 13px; overflow: hidden; margin-bottom: 10px; }
+.gb-hdr { padding: 9px 14px; font-family: 'Bebas Neue', cursive; font-size: 13px; letter-spacing: 2px; color: var(--blue2); background: var(--blue-dim); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.gb-hdr span { font-family: 'DM Sans', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: 0; font-weight: 500; }
+.st-table { width: 100%; border-collapse: collapse; }
+.st-table th { padding: 5px 5px; font-size: 9px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--muted); text-align: center; }
+.st-table th:nth-child(2) { text-align: left; }
+.st-table td { padding: 7px 5px; font-size: 12px; border-top: 1px solid var(--border); text-align: center; color: var(--muted2); }
+.st-table td:nth-child(2) { text-align: left; color: var(--white); font-weight: 600; font-size: 12px; }
+.st-table .pts { color: var(--white); font-weight: 700; font-family: 'DM Mono', monospace; }
+.st-table tr.q td:first-child { color: var(--green); font-weight: 700; }
+.st-table tr.q { background: rgba(34,197,94,.04); }
+.qn { padding: 6px 13px; font-size: 9px; color: rgba(34,197,94,.7); }
+
+/* ══════════════════════════════════════════════════════════
+   FUN FACTS
+══════════════════════════════════════════════════════════ */
+.fact-card { background: var(--card); border: 1px solid var(--border); border-left: 3px solid transparent; border-radius: 13px; padding: 13px 14px; margin-bottom: 9px; position: relative; overflow: hidden; }
+.fc-cat { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 5px; }
+.fc-title { font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 5px; line-height: 1.4; }
+.fc-body { font-size: 11px; color: var(--muted); line-height: 1.65; }
+.fc-body strong { color: var(--muted2); }
+.fc-emoji { position: absolute; bottom: -4px; right: 10px; font-size: 34px; opacity: .1; }
+
+/* ══════════════════════════════════════════════════════════
+   SOCCER 101
+══════════════════════════════════════════════════════════ */
+.s101-hero { background: linear-gradient(135deg, rgba(37,99,235,.1), rgba(230,57,70,.08)); border: 1px solid var(--border); border-radius: 13px; padding: 16px; margin-bottom: 12px; text-align: center; }
+.s101-ico { font-size: 30px; margin-bottom: 7px; }
+.s101-title { font-family: 'Bebas Neue', cursive; font-size: 20px; letter-spacing: 2px; color: var(--white); margin-bottom: 3px; }
+.s101-sub { font-size: 12px; color: var(--muted); line-height: 1.65; }
+
+.rule-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 13px 14px; cursor: pointer; transition: border-color .2s; margin-bottom: 8px; }
+.rule-card.open { border-color: rgba(230,57,70,.4); }
+.rc-q { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.rc-left { display: flex; gap: 9px; align-items: center; }
+.rc-emoji { font-size: 20px; flex-shrink: 0; }
+.rc-question { font-size: 13px; font-weight: 700; color: var(--white); line-height: 1.3; }
+.rc-chev { color: var(--muted); font-size: 13px; flex-shrink: 0; }
+.rc-answer { margin-top: 11px; padding-top: 11px; border-top: 1px solid var(--border); display: none; }
+.rule-card.open .rc-answer { display: block; }
+.rc-text { font-size: 12px; color: var(--muted2); line-height: 1.7; }
+.rc-analogy { margin-top: 8px; padding: 9px 11px; background: var(--blue-dim); border-radius: 8px; border-left: 3px solid var(--blue2); font-size: 11px; color: #7db4e0; line-height: 1.6; }
+.rc-fact { margin-top: 7px; padding: 9px 11px; background: var(--gold-dim); border-radius: 8px; border-left: 3px solid var(--gold); font-size: 11px; color: var(--gold); line-height: 1.6; }
+
+/* ══════════════════════════════════════════════════════════
+   AI CHAT
+══════════════════════════════════════════════════════════ */
+#s-chat { background: var(--bg); }
+.chat-hero { padding: 12px 17px 13px; background: linear-gradient(150deg, #12051a 0%, var(--bg) 60%); border-bottom: 1px solid var(--border); flex-shrink: 0; text-align: center; }
+.ch-ico { font-size: 26px; margin-bottom: 3px; }
+.ch-title { font-family: 'Bebas Neue', cursive; font-size: 19px; letter-spacing: 2px; color: var(--white); }
+.ch-sub { font-size: 10px; color: var(--muted); margin-top: 1px; }
+.sugg-row { display: flex; gap: 5px; overflow-x: auto; padding: 7px 14px 4px; flex-shrink: 0; }
+.sugg-row::-webkit-scrollbar { display: none; }
+.sg { flex-shrink: 0; background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 5px 11px; font-size: 10px; color: var(--muted2); cursor: pointer; transition: all .2s; white-space: nowrap; }
+.sg:hover { border-color: var(--red); color: var(--red); }
+.chat-msgs { flex: 1; overflow-y: auto; padding: 10px 13px 6px; display: flex; flex-direction: column; gap: 9px; }
+.chat-msgs::-webkit-scrollbar { display: none; }
+.msg { max-width: 86%; animation: fadeUp .22s ease; }
+.msg-u { align-self: flex-end; }
+.msg-a { align-self: flex-start; }
+.bubble { padding: 9px 13px; border-radius: 14px; font-size: 12px; line-height: 1.6; }
+.msg-u .bubble { background: var(--red); color: #fff; border-bottom-right-radius: 3px; font-weight: 500; }
+.msg-a .bubble { background: var(--card); border: 1px solid var(--border); color: var(--white); border-bottom-left-radius: 3px; }
+.msg-a.thinking .bubble { animation: pulse 1.1s infinite; }
+.msg-meta { font-size: 9px; color: var(--muted); margin-top: 2px; padding: 0 3px; }
+.msg-u .msg-meta { text-align: right; }
+.chat-input-area { padding: 8px 12px 15px; border-top: 1px solid var(--border); background: var(--nav); display: flex; gap: 7px; align-items: flex-end; flex-shrink: 0; }
+.ci { flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 11px; padding: 9px 12px; color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; resize: none; max-height: 72px; transition: border-color .2s; line-height: 1.4; }
+.ci:focus { border-color: rgba(230,57,70,.4); }
+.ci::placeholder { color: var(--muted); }
+.send { width: 38px; height: 38px; background: var(--red); border: none; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 17px; cursor: pointer; flex-shrink: 0; transition: background .2s, transform .14s; }
+.send:active { transform: scale(.92); }
+.send:disabled { background: var(--border); cursor: not-allowed; }
+
+/* ══════════════════════════════════════════════════════════
+   NOTIFICATIONS
+══════════════════════════════════════════════════════════ */
+#s-notif { background: var(--bg); }
+.trow { background: var(--card); border: 1px solid var(--border); border-radius: 11px; padding: 11px 13px; display: flex; align-items: center; justify-content: space-between; gap: 9px; margin-bottom: 6px; }
+.tr-left { display: flex; align-items: center; gap: 9px; }
+.tr-ico { font-size: 17px; }
+.tr-t { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 1px; }
+.tr-s { font-size: 10px; color: var(--muted); }
+.team-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.tch { background: var(--card); border: 1px solid var(--border); border-radius: 11px; padding: 10px; display: flex; align-items: center; gap: 7px; cursor: pointer; transition: all .2s; }
+.tch.sel { background: var(--red-dim); border-color: rgba(230,57,70,.3); }
+.tch-f { font-size: 19px; }
+.tch-n { font-size: 11px; font-weight: 600; color: var(--muted2); }
+.tch.sel .tch-n { color: var(--white); }
+.tch-c { margin-left: auto; font-size: 12px; color: var(--red); opacity: 0; }
+.tch.sel .tch-c { opacity: 1; }
+
+/* ── DISCLAIMER ─────────────────────────────────────────── */
+.disclaimer-bar { background: rgba(29,114,184,.1); border-bottom: 1px solid rgba(29,114,184,.2); padding: 6px 18px; text-align: center; font-size: 10px; color: var(--blue2); letter-spacing: .3px; flex-shrink: 0; cursor: pointer; }
+.disclaimer-bar a { color: var(--blue2); text-decoration: underline; }
+
+/* ── ANNOTATION ─────────────────────────────────────────── */
+.ann { width: 252px; display: flex; flex-direction: column; gap: 13px; }
+@media(max-width:780px) { .ann { width: 100%; max-width: 375px; } .stage { gap: 22px; } }
+.ann-card { background: var(--card); border: 1px solid var(--border); border-radius: 13px; padding: 13px 15px; }
+.ann-title { font-size: 10px; font-weight: 700; color: var(--red); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+.ann-row { display: flex; align-items: flex-start; gap: 7px; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 11px; color: var(--muted); line-height: 1.5; }
+.ann-row:last-child { border-bottom: none; }
+.ann-row strong { color: var(--muted2); display: block; }
+.ann-dot { color: var(--red); flex-shrink: 0; margin-top: 1px; }
+.fb { background: var(--red-dim); border: 1px solid rgba(230,57,70,.2); border-radius: 11px; padding: 13px 14px; font-size: 11px; color: var(--muted); line-height: 1.7; }
+.fb strong { color: var(--red); display: block; margin-bottom: 4px; }
+
+/* ── SOCCER 101 RULE CARDS ─────────────────────────────── */
+.s101-intro{background:linear-gradient(135deg,rgba(37,99,235,.12),rgba(230,57,70,.08));border:1px solid var(--border);border-radius:13px;padding:14px 16px;margin-bottom:14px;display:flex;gap:12px;align-items:center;}
+.s101-intro-flag{font-size:30px;flex-shrink:0;}
+.s101-intro-title{font-family:'Bebas Neue',cursive;font-size:18px;letter-spacing:2px;color:var(--white);margin-bottom:3px;}
+.s101-intro-sub{font-size:11px;color:var(--muted);line-height:1.6;}
+
+/* Rule Card — new visual design */
+.rcard{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden;cursor:pointer;transition:border-color .2s;}
+.rcard.open{border-color:rgba(230,57,70,.4);}
+.rcard-header{padding:13px 14px;display:flex;align-items:center;gap:10px;}
+.rcard-num{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',cursive;font-size:15px;flex-shrink:0;}
+.rcard-q{flex:1;font-size:13px;font-weight:700;color:var(--white);line-height:1.3;}
+.rcard-chev{color:var(--muted);font-size:12px;flex-shrink:0;transition:transform .25s;}
+.rcard.open .rcard-chev{transform:rotate(180deg);}
+.rcard-body{display:none;border-top:1px solid var(--border);}
+.rcard.open .rcard-body{display:block;}
+
+/* SVG diagram area */
+.diagram-wrap{background:#080d22;padding:14px 12px;display:flex;justify-content:center;}
+.diagram-wrap svg{display:block;}
+
+/* Text content below diagram */
+.rcard-content{padding:12px 14px;}
+.rcard-rule{font-size:12px;color:var(--muted2);line-height:1.7;margin-bottom:10px;}
+
+/* Analogy pill */
+.analogy-pill{background:var(--blue-dim);border:1px solid rgba(37,99,235,.25);border-radius:9px;padding:9px 12px;margin-bottom:8px;display:flex;align-items:flex-start;gap:8px;}
+.analogy-sport{font-size:14px;flex-shrink:0;margin-top:1px;}
+.analogy-txt{font-size:11px;color:#7db4e0;line-height:1.6;}
+.analogy-txt strong{color:var(--white);}
+
+/* Fun fact pill */
+.fact-pill-sm{background:var(--gold-dim);border:1px solid rgba(244,164,48,.2);border-radius:9px;padding:8px 12px;display:flex;align-items:flex-start;gap:8px;}
+.fact-pill-sm .fi{font-size:14px;flex-shrink:0;}
+.fact-pill-sm .ft{font-size:11px;color:var(--gold);line-height:1.55;}
+
+/* ── AI CHAT ─────────────────────────────────────────── */
+#s-chat{}
+.chat-hero{padding:12px 17px 13px;background:linear-gradient(150deg,#12051a 0%,var(--bg) 60%);border-bottom:1px solid var(--border);flex-shrink:0;text-align:center;}
+.analogy-sport{font-size:14px;flex-shrink:0;margin-top:1px;}
+.analogy-txt{font-size:11px;color:#7db4e0;line-height:1.6;}
+.analogy-txt strong{color:var(--white);}
+
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div>
+    <h1>SOCCER101 — v5</h1>
+    <p style="font-size:11px;color:var(--muted);margin-top:3px;">🇺🇸 American redesign · 11 ekran · tıklanabilir</p>
+  </div>
+  <div class="nav-pills">
+    <div class="np on"  data-screen="splash">① Splash</div>
+    <div class="np"     data-screen="onboard">② Onboard</div>
+    <div class="np"     data-screen="home">③ Scores</div>
+    <div class="np"     data-screen="match">④ Match</div>
+    <div class="np"     data-screen="bracket">⑤ Bracket</div>
+    <div class="np"     data-screen="player">⑥ Player</div>
+    <div class="np"     data-screen="standings">⑦ Table</div>
+    <div class="np"     data-screen="facts">⑧ Facts</div>
+    <div class="np"     data-screen="101">⑨ 101</div>
+    <div class="np"     data-screen="chat">⑩ Ask AI</div>
+    <div class="np"     data-screen="notif">⑪ Alerts</div>
+  </div>
+</div>
+
+<div class="stage">
+<div class="phone">
+<div class="pscreen">
+
+<div class="sb"><span class="sb-t">9:41</span><span class="sb-i">▶ ⠿⠿⠿ 🔋</span></div>
+
+<!-- ① SPLASH -->
+<div class="scr on" id="s-splash">
+  <div class="splash-stars"></div>
+  <div class="pad44"></div>
+  <div class="spl-wrap">
+    <div class="spl-badge">⭐ WORLD CUP 2026 ⭐</div>
+    <div class="spl-ball">⚽</div>
+    <div class="spl-logo">SOCCER<span>101</span></div>
+    <div class="spl-tag">The World Cup 2026 app built for Americans<br>who are just discovering that soccer<br>is actually the greatest sport on earth.</div>
+    <div style="width:100%">
+      <button class="btn-red" data-goto="onboard">🇺🇸 Get Started — It's Free</button>
+      <button class="btn-ghost" data-goto="home">I already have an account</button>
+    </div>
+    <div class="spl-terms">Unofficial fan app · Not affiliated with FIFA<br>By continuing you agree to our Terms &amp; Privacy Policy</div>
+    <div class="spl-flag-stripe"></div>
+  </div>
+</div>
+
+<!-- ② ONBOARDING -->
+<div class="scr" id="s-onboard">
+  <div class="pad44"></div>
+
+  <div class="ob-step on" id="ob1">
+    <div class="ob-dots"><div class="ob-dot on"></div><div class="ob-dot"></div><div class="ob-dot"></div></div>
+    <div class="ob1-body">
+      <div class="ob1-icon">🏆</div>
+      <div class="ob1-title">Welcome to<br><span>SOCCER101</span></div>
+      <div class="ob1-sub">Your World Cup 2026 companion.<br>We make football easy for everyone.</div>
+      <div class="ob1-features">
+        <div class="ob1-feat"><div class="ob1-feat-ico">⚽</div><div class="ob1-feat-txt"><strong>Live Scores</strong><span>Updated every 20 seconds. Live scores. Real-time updates.</span></div></div>
+        <div class="ob1-feat"><div class="ob1-feat-ico">🔔</div><div class="ob1-feat-txt"><strong>Goal Alerts</strong><span>Push the moment the ball hits the net.</span></div></div>
+        <div class="ob1-feat"><div class="ob1-feat-ico">🎓</div><div class="ob1-feat-txt"><strong>Soccer 101</strong><span>Rules explained with NFL/NBA analogies.</span></div></div>
+        <div class="ob1-feat"><div class="ob1-feat-ico">🤙</div><div class="ob1-feat-txt"><strong>Ask AI Anything</strong><span>No dumb questions. Seriously.</span></div></div>
+      </div>
+    </div>
+    <div class="ob-footer"><button class="btn-red" data-ob="2">Let's Go →</button></div>
+  </div>
+
+  <div class="ob-step" id="ob2">
+    <div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot on"></div><div class="ob-dot"></div></div>
+    <div class="ob2-body">
+      <div style="height:6px"></div>
+      <div class="ob2-title">Pick your team 🏳️</div>
+      <div class="ob2-sub">We'll put them first and send you their alerts.</div>
+      <div class="ob2-grid">
+        <div class="ob2-team sel"><div class="ob2-check">✓</div><div class="ob2-flag">🇺🇸</div><div class="ob2-name">USA</div></div>
+        <div class="ob2-team"><div class="ob2-check">✓</div><div class="ob2-flag">🇲🇽</div><div class="ob2-name">Mexico</div></div>
+        <div class="ob2-team"><div class="ob2-check">✓</div><div class="ob2-flag">🇨🇦</div><div class="ob2-name">Canada</div></div>
+        <div class="ob2-team"><div class="ob2-check">✓</div><div class="ob2-flag">🇧🇷</div><div class="ob2-name">Brazil</div></div>
+        <div class="ob2-team"><div class="ob2-check">✓</div><div class="ob2-flag">🇦🇷</div><div class="ob2-name">Argentina</div></div>
+        <div class="ob2-team"><div class="ob2-check">✓</div><div class="ob2-flag">🇫🇷</div><div class="ob2-name">France</div></div>
+        <div class="ob2-team"><div class="ob2-check">✓</div><div class="ob2-flag">🇩🇪</div><div class="ob2-name">Germany</div></div>
+        <div class="ob2-team"><div class="ob2-check">✓</div><div class="ob2-flag">🇵🇹</div><div class="ob2-name">Portugal</div></div>
+        <div class="ob2-team"><div class="ob2-check">✓</div><div class="ob2-flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</div><div class="ob2-name">England</div></div>
+        <div class="ob2-team"><div class="ob2-check">✓</div><div class="ob2-flag">🇯🇵</div><div class="ob2-name">Japan</div></div>
+      </div>
+      <div style="font-size:10px;color:var(--muted);text-align:center">Change anytime in Settings</div>
+    </div>
+    <div class="ob-footer"><button class="btn-red" data-ob="3">Continue →</button></div>
+  </div>
+
+  <div class="ob-step" id="ob3">
+    <div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot on"></div></div>
+    <div class="ob3-body">
+      <div style="height:6px"></div>
+      <div class="ob3-title">Turn on alerts 🔔</div>
+      <div class="ob3-sub">Know the moment something happens.</div>
+      <div class="ob3-rows">
+        <div class="ob3-row"><div class="ob3-left"><div class="ob3-ico">⚽</div><div><div class="ob3-txt">Goals</div><div class="ob3-sub2">Instant push on every goal</div></div></div><div class="tog on"></div></div>
+        <div class="ob3-row"><div class="ob3-left"><div class="ob3-ico">🟥</div><div><div class="ob3-txt">Red Cards</div><div class="ob3-sub2">When a player is sent off</div></div></div><div class="tog on"></div></div>
+        <div class="ob3-row"><div class="ob3-left"><div class="ob3-ico">🏁</div><div><div class="ob3-txt">Full Time</div><div class="ob3-sub2">Final score alert</div></div></div><div class="tog on"></div></div>
+        <div class="ob3-row"><div class="ob3-left"><div class="ob3-ico">🎯</div><div><div class="ob3-txt">Penalty Shootouts</div><div class="ob3-sub2">It's going to penalties!</div></div></div><div class="tog on"></div></div>
+        <div class="ob3-row"><div class="ob3-left"><div class="ob3-ico">🟢</div><div><div class="ob3-txt">Kick Off</div><div class="ob3-sub2">When your team's match starts</div></div></div><div class="tog"></div></div>
+      </div>
+    </div>
+    <div class="ob-footer">
+      <button class="btn-red" data-goto="home" style="margin-bottom:7px">Let's Watch ⚽</button>
+      <button class="btn-ghost" data-goto="home">Skip for now</button>
+    </div>
+  </div>
+</div>
+
+<!-- ③ HOME -->
+<div class="scr" id="s-home">
+  <div class="pad44"></div>
+  <div class="h-top">
+    <div class="h-logo">SOCCER<span>101</span></div>
+    <div class="h-icons">
+      <div class="ico-btn" data-goto="notif">🔔</div>
+      <div class="ico-btn">👤</div>
+    </div>
+  </div>
+  <div class="usa-banner">
+    <div class="ldot"></div>
+    <div class="ticker-txt">🟡 DEMO — USA vs Portugal in progress</div>
+    <div class="ticker-score">1–1</div>
+  </div>
+  <div class="tabs">
+    <div class="tc on">Today</div>
+    <div class="tc off">Tomorrow</div>
+    <div class="tc off">Schedule</div>
+    <div class="tc off">My Teams</div>
+  </div>
+  <div class="sa" style="margin-top:5px">
+    <div class="sec">🟡 Demo Match</div>
+    <div class="mc lv" data-goto="match">
+      <div class="mc-bar"></div>
+      <div class="mc-top"><span class="mc-rnd">Group B · MetLife, NJ</span><span class="bdg live">🟡 DEMO <span id="lm1">67'</span></span></div>
+      <div class="mc-body">
+        <div class="mc-team"><div class="mc-flag">🇺🇸</div><div class="mc-name">USA</div></div>
+        <div class="mc-ctr"><div class="mc-score">1&nbsp;1</div><div class="mc-min" id="lm2">67'</div></div>
+        <div class="mc-team"><div class="mc-flag">🇵🇹</div><div class="mc-name">Portugal</div></div>
+      </div>
+      <div class="mc-evs">
+        <div class="mc-ev"><span class="ev-m">23'</span><span>⚽</span><span class="ev-t g">Pulisic (USA)</span></div>
+        <div class="mc-ev"><span class="ev-m">55'</span><span>⚽</span><span class="ev-t g">Ronaldo (POR)</span></div>
+      </div>
+    </div>
+    <div class="sec">⏰ Upcoming</div>
+    <div class="mc">
+      <div class="mc-top"><span class="mc-rnd">Group C · Rose Bowl, LA</span><span class="bdg ns">3:00 PM</span></div>
+      <div class="mc-body">
+        <div class="mc-team"><div class="mc-flag">🇲🇽</div><div class="mc-name">Mexico</div></div>
+        <div class="mc-ctr"><div class="mc-vs">VS</div></div>
+        <div class="mc-team"><div class="mc-flag">🇵🇱</div><div class="mc-name">Poland</div></div>
+      </div>
+    </div>
+    <div class="mc">
+      <div class="mc-top"><span class="mc-rnd">Group A · AT&amp;T, Dallas</span><span class="bdg ns">6:00 PM</span></div>
+      <div class="mc-body">
+        <div class="mc-team"><div class="mc-flag">🇧🇷</div><div class="mc-name">Brazil</div></div>
+        <div class="mc-ctr"><div class="mc-vs">VS</div></div>
+        <div class="mc-team"><div class="mc-flag">🇩🇪</div><div class="mc-name">Germany</div></div>
+      </div>
+    </div>
+    <div class="sec">✅ Finished</div>
+    <div class="mc">
+      <div class="mc-top"><span class="mc-rnd">Group D · SoFi, LA</span><span class="bdg ft">Full Time</span></div>
+      <div class="mc-body">
+        <div class="mc-team"><div class="mc-flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</div><div class="mc-name">England</div></div>
+        <div class="mc-ctr"><div class="mc-score">2&nbsp;0</div><div class="mc-min ftlbl">FT</div></div>
+        <div class="mc-team"><div class="mc-flag">🇮🇷</div><div class="mc-name">Iran</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="bnav">
+    <div class="ni on" data-goto="home"><div class="ni-ico">⚽</div><div class="ni-lbl">Scores</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="bracket"><div class="ni-ico">🏆</div><div class="ni-lbl">Bracket</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="facts"><div class="ni-ico">💡</div><div class="ni-lbl">Facts</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="chat"><div class="ni-ico">🤙</div><div class="ni-lbl">Ask AI</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="notif"><div class="ni-ico">🔔</div><div class="ni-lbl">Alerts</div><div class="ni-dot"></div></div>
+  </div>
+</div>
+
+<!-- ④ MATCH -->
+<div class="scr" id="s-match">
+  <div class="pad44"></div>
+  <div class="mhero">
+    <div class="mh-top">
+      <div class="back" data-goto="home">←</div>
+      <div class="mh-rnd">GROUP B · MATCHDAY 2</div>
+      <div class="mh-live"><div class="ldot"></div>DEMO <span id="lm3">67'</span></div>
+    </div>
+    <div class="mh-row">
+      <div class="mh-team"><div class="mh-flag">🇺🇸</div><div class="mh-tn">United States</div></div>
+      <div style="display:flex;flex-direction:column;align-items:center"><div class="mh-sc"><span>1</span><span class="mh-sep">–</span><span>1</span></div></div>
+      <div class="mh-team"><div class="mh-flag">🇵🇹</div><div class="mh-tn">Portugal</div></div>
+    </div>
+    <div class="mh-venue">🏟 MetLife Stadium, East Rutherford NJ</div>
+  </div>
+  <div class="mtabs-strip">
+    <div class="mt on" data-mt="ev">Events</div>
+    <div class="mt off" data-mt="st">Stats</div>
+    <div class="mt off" data-mt="lu">Lineup</div>
+    <div class="mt off" data-mt="co">🌍 Countries</div>
+  </div>
+  <div class="sa" id="msa">
+    <div id="mt-ev">
+      <div class="ei"><div class="ei-min">23'</div><div class="ei-ico">⚽</div><div><div class="ei-ttl">GOAL — Christian Pulisic</div><div class="ei-sub">🇺🇸 Assist: Weah · Right foot</div></div></div>
+      <div class="ei"><div class="ei-min">38'</div><div class="ei-ico">🟨</div><div><div class="ei-ttl">Yellow — Rúben Neves</div><div class="ei-sub">🇵🇹 Tactical foul</div></div></div>
+      <div class="ei"><div class="ei-min">45'</div><div class="ei-ico">⏸</div><div><div class="ei-ttl">Half Time — USA 1–0 POR</div><div class="ei-sub">2 min added time</div></div></div>
+      <div class="ei"><div class="ei-min">55'</div><div class="ei-ico">⚽</div><div><div class="ei-ttl">GOAL — Cristiano Ronaldo</div><div class="ei-sub">🇵🇹 Header from corner · 1–1</div></div></div>
+      <div class="ei"><div class="ei-min">63'</div><div class="ei-ico">🔄</div><div><div class="ei-ttl">Sub — USA</div><div class="ei-sub">Adams OUT → Reyna IN</div></div></div>
+    </div>
+    <div id="mt-st" style="display:none">
+      <div style="height:8px"></div>
+      <div class="sr"><div class="sl"><span>🇺🇸 43%</span><span>Possession</span><span>57% 🇵🇹</span></div><div class="sb2"><div class="sf" style="width:43%"></div></div></div>
+      <div class="sr"><div class="sl"><span>🇺🇸 8</span><span>Shots</span><span>14 🇵🇹</span></div><div class="sb2"><div class="sf" style="width:36%"></div></div></div>
+      <div class="sr"><div class="sl"><span>🇺🇸 3</span><span>On Target</span><span>6 🇵🇹</span></div><div class="sb2"><div class="sf" style="width:33%"></div></div></div>
+      <div class="sr"><div class="sl"><span>🇺🇸 5</span><span>Corners</span><span>4 🇵🇹</span></div><div class="sb2"><div class="sf" style="width:55%"></div></div></div>
+      <div class="sr"><div class="sl"><span>🇺🇸 412</span><span>Passes</span><span>589 🇵🇹</span></div><div class="sb2"><div class="sf" style="width:41%"></div></div></div>
+    </div>
+    <div id="mt-lu" style="display:none">
+      <div style="height:6px"></div>
+      <div class="lu-hdr"><div class="lu-t">🇺🇸 United States</div><div class="lu-f">4–3–3</div></div>
+      <div class="prow"><div class="p-n">1</div><div class="p-pos gk">GK</div><div class="p-nm">Turner</div><div class="p-rt" style="color:var(--green)">7.2</div></div>
+      <div class="prow"><div class="p-n">5</div><div class="p-pos df">DF</div><div class="p-nm">Zimmerman</div><div class="p-rt" style="color:var(--muted2)">6.8</div></div>
+      <div class="prow"><div class="p-n">14</div><div class="p-pos mf">MF</div><div class="p-nm">Musah</div><div class="p-rt" style="color:var(--gold)">7.1</div></div>
+      <div class="prow"><div class="p-n">10</div><div class="p-pos fw">FW</div><div class="p-nm player-link" data-goto="player" style="color:var(--red)">Pulisic ⚽</div><div class="p-rt" style="color:var(--red)">8.1</div></div>
+    </div>
+    <div id="mt-co" style="display:none">
+      <div style="height:6px"></div>
+      <div class="cfc" style="background:linear-gradient(135deg,rgba(29,114,184,.1),var(--card));border:1px solid rgba(29,114,184,.25)">
+        <div class="cfc-bg">🇺🇸</div>
+        <div class="cfc-hdr"><span class="cfc-flag">🇺🇸</span><span class="cfc-cn">United States</span><span class="cfc-tag" style="background:rgba(29,114,184,.2);color:#60a5fa">HOST</span></div>
+        <div class="cfc-facts">
+          <div class="cfc-f"><span class="cfc-fi">🏟️</span><span class="cfc-ft"><strong>16 venues</strong> across USA, Canada &amp; Mexico — most ever in WC history.</span></div>
+          <div class="cfc-f"><span class="cfc-fi">⚽</span><span class="cfc-ft">Best finish: <strong>3rd place in 1930</strong>. Qualified 11 times total.</span></div>
+          <div class="cfc-f"><span class="cfc-fi">📈</span><span class="cfc-ft">MLS attendance <strong>surpassed NBA &amp; NHL</strong> in recent years.</span></div>
+        </div>
+      </div>
+      <div class="cfc" style="background:linear-gradient(135deg,rgba(230,57,70,.08),var(--card));border:1px solid rgba(230,57,70,.2)">
+        <div class="cfc-bg">🇵🇹</div>
+        <div class="cfc-hdr"><span class="cfc-flag">🇵🇹</span><span class="cfc-cn">Portugal</span><span class="cfc-tag" style="background:var(--red-dim);color:var(--red)">UEFA</span></div>
+        <div class="cfc-facts">
+          <div class="cfc-f"><span class="cfc-fi">👑</span><span class="cfc-ft"><strong>Ronaldo</strong> — all-time top international scorer, 130+ goals.</span></div>
+          <div class="cfc-f"><span class="cfc-fi">🏆</span><span class="cfc-ft">Won EURO 2016. Still <strong>waiting for first World Cup</strong>.</span></div>
+          <div class="cfc-f"><span class="cfc-fi">🌍</span><span class="cfc-ft">Portuguese spoken by <strong>250 million people</strong> worldwide.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bnav">
+    <div class="ni off" data-goto="home"><div class="ni-ico">⚽</div><div class="ni-lbl">Scores</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="bracket"><div class="ni-ico">🏆</div><div class="ni-lbl">Bracket</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="facts"><div class="ni-ico">💡</div><div class="ni-lbl">Facts</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="chat"><div class="ni-ico">🤙</div><div class="ni-lbl">Ask AI</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="notif"><div class="ni-ico">🔔</div><div class="ni-lbl">Alerts</div><div class="ni-dot"></div></div>
+  </div>
+</div>
+
+<!-- ⑤ BRACKET -->
+<div class="scr" id="s-bracket">
+  <div class="pad44"></div>
+  <div class="shdr"><div class="shdr-title">🏆 Knockout Bracket</div><div style="font-size:10px;color:var(--muted);margin-left:auto">← Scroll →</div></div>
+  <div class="bracket-outer">
+    <div class="bracket-inner">
+      <div class="br-col">
+        <div class="br-col-title">R32<span class="br-date">Jun 28–Jul 4</span></div>
+        <div class="br-slots">
+          <div class="br-slot hl" data-goto="match"><div class="br-t">🇺🇸 USA <span class="br-sc">1</span></div><div class="br-div"></div><div class="br-t">🇵🇹 POR <span class="br-sc">1</span></div><div class="br-dt">Jun 28 · Demo</div></div>
+          <div class="br-slot win"><div class="br-t">🇦🇷 ARG <span class="br-sc">2</span></div><div class="br-div"></div><div class="br-t">🇲🇦 MAR <span class="br-sc">0</span></div><div class="br-dt">Jun 29 · FT</div></div>
+          <div class="br-slot"><div class="br-t">🇫🇷 FRA</div><div class="br-div"></div><div class="br-t tbd">2D TBD</div><div class="br-dt">Jun 30</div></div>
+          <div class="br-slot"><div class="br-t">🏴󠁧󠁢󠁥󠁮󠁧󠁿 ENG</div><div class="br-div"></div><div class="br-t tbd">2C TBD</div><div class="br-dt">Jul 1</div></div>
+          <div class="br-slot"><div class="br-t tbd">1E TBD</div><div class="br-div"></div><div class="br-t tbd">2F TBD</div><div class="br-dt">Jul 2</div></div>
+          <div class="br-slot"><div class="br-t tbd">1F TBD</div><div class="br-div"></div><div class="br-t tbd">2E TBD</div><div class="br-dt">Jul 3</div></div>
+          <div class="br-slot"><div class="br-t tbd">1G TBD</div><div class="br-div"></div><div class="br-t tbd">2H TBD</div><div class="br-dt">Jul 3</div></div>
+          <div class="br-slot"><div class="br-t tbd">1H TBD</div><div class="br-div"></div><div class="br-t tbd">2G TBD</div><div class="br-dt">Jul 4</div></div>
+        </div>
+      </div>
+      <div class="br-col">
+        <div class="br-col-title">R16<span class="br-date">Jul 5–9</span></div>
+        <div class="br-slots">
+          <div class="br-slot" style="flex:2"><div class="br-t win">🇦🇷 Argentina</div><div class="br-div"></div><div class="br-t tbd">W M1 TBD</div><div class="br-dt">Jul 5</div></div>
+          <div class="br-slot" style="flex:2"><div class="br-t tbd">W M3 TBD</div><div class="br-div"></div><div class="br-t tbd">W M4 TBD</div><div class="br-dt">Jul 6</div></div>
+          <div class="br-slot" style="flex:2"><div class="br-t tbd">W M5 TBD</div><div class="br-div"></div><div class="br-t tbd">W M6 TBD</div><div class="br-dt">Jul 7</div></div>
+          <div class="br-slot" style="flex:2"><div class="br-t tbd">W M7 TBD</div><div class="br-div"></div><div class="br-t tbd">W M8 TBD</div><div class="br-dt">Jul 8</div></div>
+        </div>
+      </div>
+      <div class="br-col">
+        <div class="br-col-title">QF<span class="br-date">Jul 11–12</span></div>
+        <div class="br-slots">
+          <div class="br-slot" style="flex:4"><div class="br-t tbd">QF 1</div><div class="br-div"></div><div class="br-t tbd">QF 1</div><div class="br-dt">Jul 11</div></div>
+          <div class="br-slot" style="flex:4"><div class="br-t tbd">QF 2</div><div class="br-div"></div><div class="br-t tbd">QF 2</div><div class="br-dt">Jul 12</div></div>
+          <div class="br-slot" style="flex:4"><div class="br-t tbd">QF 3</div><div class="br-div"></div><div class="br-t tbd">QF 3</div><div class="br-dt">Jul 12</div></div>
+          <div class="br-slot" style="flex:4"><div class="br-t tbd">QF 4</div><div class="br-div"></div><div class="br-t tbd">QF 4</div><div class="br-dt">Jul 12</div></div>
+        </div>
+      </div>
+      <div class="br-col">
+        <div class="br-col-title">SF<span class="br-date">Jul 15–16</span></div>
+        <div class="br-slots">
+          <div class="br-slot" style="flex:8"><div class="br-t tbd">SF 1</div><div class="br-div"></div><div class="br-t tbd">SF 1</div><div class="br-dt">Jul 15</div></div>
+          <div class="br-slot" style="flex:8"><div class="br-t tbd">SF 2</div><div class="br-div"></div><div class="br-t tbd">SF 2</div><div class="br-dt">Jul 16</div></div>
+        </div>
+      </div>
+      <div class="br-col">
+        <div class="br-col-title">FINAL<span class="br-date">Jul 19</span></div>
+        <div class="br-slots">
+          <div class="final-slot"><div class="trophy-big">🏆</div><div class="br-t tbd" style="justify-content:center">TBD</div><div class="br-div"></div><div class="br-t tbd" style="justify-content:center">TBD</div><div class="br-dt" style="text-align:center">Jul 19 · MetLife</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="br-note">🟡 Demo match &nbsp;·&nbsp; 🟢 Winner confirmed &nbsp;·&nbsp; Group stage ongoing</div>
+  </div>
+  <div class="bnav">
+    <div class="ni off" data-goto="home"><div class="ni-ico">⚽</div><div class="ni-lbl">Scores</div><div class="ni-dot"></div></div>
+    <div class="ni on"><div class="ni-ico">🏆</div><div class="ni-lbl">Bracket</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="facts"><div class="ni-ico">💡</div><div class="ni-lbl">Facts</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="chat"><div class="ni-ico">🤙</div><div class="ni-lbl">Ask AI</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="notif"><div class="ni-ico">🔔</div><div class="ni-lbl">Alerts</div><div class="ni-dot"></div></div>
+  </div>
+</div>
+
+<!-- ⑥ PLAYER -->
+<div class="scr" id="s-player">
+  <div class="pad44"></div>
+  <div class="player-switch" id="player-switch">
+    <div class="ps-chip on" data-player="pulisic">🇺🇸 Pulisic</div>
+    <div class="ps-chip off" data-player="ronaldo">🇵🇹 Ronaldo</div>
+    <div class="ps-chip off" data-player="mbappe">🇫🇷 Mbappé</div>
+    <div class="ps-chip off" data-player="messi">🇦🇷 Messi</div>
+  </div>
+  <div class="player-hero">
+    <div class="ph-top">
+      <div class="back" data-goto="match">←</div>
+      <div class="ph-avatar" id="p-avatar">⚡</div>
+      <div>
+        <div class="ph-name" id="p-name">PULISIC</div>
+        <div class="ph-sub" id="p-sub">🇺🇸 USA · AC Milan</div>
+        <div class="ph-pos-badge" id="p-pos" style="background:rgba(230,57,70,.15);color:var(--red)">FW · #10</div>
+      </div>
+    </div>
+    <div class="ph-stats-row">
+      <div class="ph-stat"><div class="ph-stat-val red" id="p-g">3</div><div class="ph-stat-lbl">Goals</div></div>
+      <div class="ph-stat"><div class="ph-stat-val" id="p-a">2</div><div class="ph-stat-lbl">Assists</div></div>
+      <div class="ph-stat"><div class="ph-stat-val" id="p-r">8.1</div><div class="ph-stat-lbl">Rating</div></div>
+      <div class="ph-stat"><div class="ph-stat-val" id="p-wc">6</div><div class="ph-stat-lbl">WC Apps</div></div>
+    </div>
+  </div>
+  <div class="ptabs" id="ptabs">
+    <div class="pt on" data-pt="bio">Bio</div>
+    <div class="pt off" data-pt="career">Career</div>
+    <div class="pt off" data-pt="pfacts">Fun Facts</div>
+  </div>
+  <div class="sa" id="psa">
+    <div id="pt-bio">
+      <div class="bio-card">
+        <div class="bc-title">Profile</div>
+        <div class="bc-row" id="pr-age"><span class="bc-key">Age</span><span class="bc-val">25</span></div>
+        <div class="bc-row" id="pr-club"><span class="bc-key">Club</span><span class="bc-val">AC Milan (Italy)</span></div>
+        <div class="bc-row" id="pr-born"><span class="bc-key">Born</span><span class="bc-val">Hershey, Pennsylvania</span></div>
+        <div class="bc-row" id="pr-caps"><span class="bc-key">Caps</span><span class="bc-val">68</span></div>
+        <div class="bc-row" id="pr-foot"><span class="bc-key">Foot</span><span class="bc-val">Left</span></div>
+      </div>
+      <div class="bio-card"><div class="bc-title">About</div><div id="p-about" style="font-size:12px;color:var(--muted2);line-height:1.7">Christian Pulisic is America's most famous soccer player — nicknamed "Captain America." He became the first American to win the UEFA Champions League in 2021 with Chelsea. At 2026, he's carrying the hopes of the host nation.</div></div>
+    </div>
+    <div id="pt-career" style="display:none">
+      <div class="ci-item" id="c1"><div class="ci-year">2021</div><div class="ci-ico">🏆</div><div><div class="ci-ttl">Champions League Winner</div><div class="ci-sub">Chelsea FC · First American ever</div></div></div>
+      <div class="ci-item" id="c2"><div class="ci-year">2022</div><div class="ci-ico">⚽</div><div><div class="ci-ttl">World Cup Qatar</div><div class="ci-sub">USA R16 · Scored vs Iran</div></div></div>
+      <div class="ci-item" id="c3"><div class="ci-year">2023</div><div class="ci-ico">🔄</div><div><div class="ci-ttl">AC Milan Transfer</div><div class="ci-sub">Chelsea → Serie A</div></div></div>
+      <div class="ci-item" id="c4"><div class="ci-year">2024</div><div class="ci-ico">🥇</div><div><div class="ci-ttl">Copa America</div><div class="ci-sub">3 goals as USA host</div></div></div>
+      <div class="ci-item" id="c5"><div class="ci-year">2026</div><div class="ci-ico">🌟</div><div><div class="ci-ttl">World Cup 2026</div><div class="ci-sub">USA captain · Group stage live</div></div></div>
+    </div>
+    <div id="pt-pfacts" style="display:none">
+      <div class="fp" id="pf1"><div class="fp-txt" id="pf1t">Pulisic was born in <strong>Hershey, Pennsylvania</strong> — the chocolate town. His family lived behind the local soccer stadium.</div></div>
+      <div class="fp" id="pf2"><div class="fp-txt" id="pf2t">He signed with <strong>Borussia Dortmund at 16</strong> and became their youngest ever Bundesliga scorer.</div></div>
+      <div class="fp" id="pf3"><div class="fp-txt" id="pf3t">Chelsea paid <strong>£58 million</strong> for him in 2019 — most expensive American at the time.</div></div>
+      <div class="fp" id="pf4"><div class="fp-txt" id="pf4t">His fan club is called <strong>"Pulisic's People"</strong> and follows him around the world.</div></div>
+    </div>
+  </div>
+  <div class="bnav">
+    <div class="ni off" data-goto="home"><div class="ni-ico">⚽</div><div class="ni-lbl">Scores</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="bracket"><div class="ni-ico">🏆</div><div class="ni-lbl">Bracket</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="facts"><div class="ni-ico">💡</div><div class="ni-lbl">Facts</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="chat"><div class="ni-ico">🤙</div><div class="ni-lbl">Ask AI</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="notif"><div class="ni-ico">🔔</div><div class="ni-lbl">Alerts</div><div class="ni-dot"></div></div>
+  </div>
+</div>
+
+<!-- ⑦ STANDINGS -->
+<div class="scr" id="s-standings">
+  <div class="pad44"></div>
+  <div class="shdr"><div class="shdr-title">Group Stage</div><div style="font-size:10px;color:var(--muted);margin-left:auto;font-weight:600">12 Groups</div></div>
+  <div class="sa">
+    <div class="group-blk"><div class="gb-hdr">Group A <span>USA · Morocco · Canada · Bosnia</span></div><table class="st-table"><tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr><tr class="q"><td>1</td><td>🇺🇸 USA</td><td>2</td><td>1</td><td>1</td><td>0</td><td>+1</td><td class="pts">4</td></tr><tr class="q"><td>2</td><td>🇲🇦 Morocco</td><td>2</td><td>1</td><td>0</td><td>1</td><td>+1</td><td class="pts">3</td></tr><tr><td>3</td><td>🇨🇦 Canada</td><td>2</td><td>0</td><td>2</td><td>0</td><td>0</td><td class="pts">2</td></tr><tr><td>4</td><td>🇧🇦 Bosnia</td><td>2</td><td>0</td><td>1</td><td>1</td><td>–2</td><td class="pts">1</td></tr></table><div class="qn">🟢 Top 2 advance</div></div>
+    <div class="group-blk"><div class="gb-hdr">Group B <span>Argentina · Portugal · Poland · S. Arabia</span></div><table class="st-table"><tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr><tr class="q"><td>1</td><td>🇦🇷 Argentina</td><td>2</td><td>2</td><td>0</td><td>0</td><td>+4</td><td class="pts">6</td></tr><tr class="q"><td>2</td><td>🇵🇹 Portugal</td><td>2</td><td>1</td><td>0</td><td>1</td><td>+2</td><td class="pts">3</td></tr><tr><td>3</td><td>🇵🇱 Poland</td><td>2</td><td>1</td><td>0</td><td>1</td><td>–1</td><td class="pts">3</td></tr><tr><td>4</td><td>🇸🇦 S. Arabia</td><td>2</td><td>0</td><td>0</td><td>2</td><td>–5</td><td class="pts">0</td></tr></table><div class="qn">🟢 Top 2 advance</div></div>
+    <div class="group-blk"><div class="gb-hdr">Group C <span>France · Brazil · Nigeria · Uruguay</span></div><table class="st-table"><tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr><tr class="q"><td>1</td><td>🇫🇷 France</td><td>2</td><td>2</td><td>0</td><td>0</td><td>+3</td><td class="pts">6</td></tr><tr class="q"><td>2</td><td>🇧🇷 Brazil</td><td>2</td><td>1</td><td>1</td><td>0</td><td>+2</td><td class="pts">4</td></tr><tr><td>3</td><td>🇳🇬 Nigeria</td><td>2</td><td>1</td><td>0</td><td>1</td><td>+1</td><td class="pts">3</td></tr><tr><td>4</td><td>🇺🇾 Uruguay</td><td>2</td><td>0</td><td>1</td><td>1</td><td>–2</td><td class="pts">1</td></tr></table><div class="qn">🟢 Top 2 advance</div></div>
+  </div>
+  <div class="bnav">
+    <div class="ni off" data-goto="home"><div class="ni-ico">⚽</div><div class="ni-lbl">Scores</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="bracket"><div class="ni-ico">🏆</div><div class="ni-lbl">Bracket</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="facts"><div class="ni-ico">💡</div><div class="ni-lbl">Facts</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="chat"><div class="ni-ico">🤙</div><div class="ni-lbl">Ask AI</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="notif"><div class="ni-ico">🔔</div><div class="ni-lbl">Alerts</div><div class="ni-dot"></div></div>
+  </div>
+</div>
+
+<!-- ⑧ FUN FACTS -->
+<div class="scr" id="s-facts">
+  <div class="pad44"></div>
+  <div class="shdr"><div class="shdr-title">⚡ Fun Facts</div><div style="font-size:10px;color:var(--muted);margin-left:auto;font-weight:600">Daily · 2026 WC</div></div>
+  <div class="sa">
+    <div class="fact-card" style="border-left-color:var(--red)"><div class="fc-cat" style="color:var(--red)">🏆 Records</div><div class="fc-title">The WC Final gets 13x more viewers than the Super Bowl.</div><div class="fc-body">2022 final: <strong>1.5 billion viewers</strong>. Super Bowl: ~115 million. Soccer is in a completely different dimension.</div><div class="fc-emoji">📺</div></div>
+    <div class="fact-card" style="border-left-color:var(--gold)"><div class="fc-cat" style="color:var(--gold)">⚡ Weird</div><div class="fc-title">A referee once booked himself during a match.</div><div class="fc-body">In 2011, a Brazilian ref got hit by the ball, reached for his pocket, and issued himself a yellow. Then realized that's not a rule. Scratched it out.</div><div class="fc-emoji">🟨</div></div>
+    <div class="fact-card" style="border-left-color:var(--blue2)"><div class="fc-cat" style="color:var(--blue2)">🌍 Countries</div><div class="fc-title">Brazil played in every single World Cup. All 22.</div><div class="fc-body">Since 1930. Also won it <strong>5 times</strong>. The US has qualified 11 times. England invented the game and won it exactly once, in 1966, at home.</div><div class="fc-emoji">🇧🇷</div></div>
+    <div class="fact-card" style="border-left-color:#a78bfa"><div class="fc-cat" style="color:#a78bfa">⚽ Players</div><div class="fc-title">Ronaldo scored in 5 different World Cups.</div><div class="fc-body">2006, 2010, 2014, 2018, 2022. He was 37 at the last one. The man refuses to accept biology.</div><div class="fc-emoji">🐐</div></div>
+    <div class="fact-card" style="border-left-color:var(--green)"><div class="fc-cat" style="color:var(--green)">🆕 2026 Special</div><div class="fc-title">2026 is the first World Cup with 48 teams — 104 total games.</div><div class="fc-body">Up from 32 teams and 64 games. New group format: 3 teams per group, every match is pressure. This is going to be chaos.</div><div class="fc-emoji">🆕</div></div>
+  </div>
+  <div class="bnav">
+    <div class="ni off" data-goto="home"><div class="ni-ico">⚽</div><div class="ni-lbl">Scores</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="bracket"><div class="ni-ico">🏆</div><div class="ni-lbl">Bracket</div><div class="ni-dot"></div></div>
+    <div class="ni on"><div class="ni-ico">💡</div><div class="ni-lbl">Facts</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="chat"><div class="ni-ico">🤙</div><div class="ni-lbl">Ask AI</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="notif"><div class="ni-ico">🔔</div><div class="ni-lbl">Alerts</div><div class="ni-dot"></div></div>
+  </div>
+</div>
+
+<!-- ⑨ SOCCER 101 -->
+<div class="scr" id="s-101">
+  <div class="pad44"></div>
+  <div class="shdr">
+    <div class="back" data-goto="home">←</div>
+    <div class="shdr-title">🎓 SOCCER 101</div>
+    <div style="margin-left:auto;font-size:10px;color:var(--muted);font-weight:600">8 rules</div>
+  </div>
+  <div class="sa">
+
+    <div class="s101-intro">
+      <div class="s101-intro-flag">🇺🇸</div>
+      <div>
+        <div class="s101-intro-title">No Shame Zone</div>
+        <div class="s101-intro-sub">Football explained using sports you already know. Every rule has a diagram + an NFL, NBA, or MLB analogy.</div>
+      </div>
+    </div>
+
+    <!-- ── RULE 1: OFFSIDES ── -->
+    <div class="rcard" id="r0">
+      <div class="rcard-header">
+        <div class="rcard-num" style="background:rgba(230,57,70,.15);color:var(--red)">1</div>
+        <div class="rcard-q">🚩 Offsides — the rule everyone gets wrong</div>
+        <div class="rcard-chev">▼</div>
+      </div>
+      <div class="rcard-body">
+        <div class="diagram-wrap">
+          <!-- OFFSIDES DIAGRAM -->
+          <svg width="320" height="130" viewBox="0 0 320 130">
+            <!-- Field -->
+            <rect width="320" height="130" fill="#0a1a10" rx="6"/>
+            <!-- Goal line -->
+            <line x1="280" y1="10" x2="280" y2="120" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="0"/>
+            <!-- Goal -->
+            <rect x="280" y="45" width="16" height="40" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+            <!-- Penalty arc -->
+            <path d="M 280 65 A 40 40 0 0 0 240 65" fill="none" stroke="#ffffff30" stroke-width="1"/>
+
+            <!-- Last defender (blue) at x=200 -->
+            <!-- Body -->
+            <circle cx="200" cy="45" r="7" fill="none" stroke="#2563eb" stroke-width="2"/>
+            <line x1="200" cy1="52" x1="200" y1="52" x2="200" y2="78" stroke="#2563eb" stroke-width="2"/>
+            <line x1="200" y1="62" x2="185" y2="72" stroke="#2563eb" stroke-width="2"/>
+            <line x1="200" y1="62" x2="215" y2="72" stroke="#2563eb" stroke-width="2"/>
+            <line x1="200" y1="78" x2="190" y2="95" stroke="#2563eb" stroke-width="2"/>
+            <line x1="200" y1="78" x2="210" y2="95" stroke="#2563eb" stroke-width="2"/>
+            <text x="200" y="112" fill="#2563eb" font-size="9" text-anchor="middle" font-family="DM Sans, sans-serif">DEF</text>
+
+            <!-- Goalkeeper (blue) at goal -->
+            <circle cx="268" cy="55" r="7" fill="none" stroke="#2563eb" stroke-width="2"/>
+            <line x1="268" y1="62" x2="268" y2="82" stroke="#2563eb" stroke-width="2"/>
+            <line x1="268" y1="69" x2="257" y2="77" stroke="#2563eb" stroke-width="2"/>
+            <line x1="268" y1="69" x2="279" y2="77" stroke="#2563eb" stroke-width="2"/>
+            <line x1="268" y1="82" x2="260" y2="98" stroke="#2563eb" stroke-width="2"/>
+            <line x1="268" y1="82" x2="276" y2="98" stroke="#2563eb" stroke-width="2"/>
+            <text x="268" y="112" fill="#2563eb" font-size="9" text-anchor="middle" font-family="DM Sans, sans-serif">GK</text>
+
+            <!-- Attacker (red) OFFSIDE at x=235 — past last defender -->
+            <circle cx="235" cy="55" r="7" fill="none" stroke="#e63946" stroke-width="2.5"/>
+            <line x1="235" y1="62" x2="235" y2="82" stroke="#e63946" stroke-width="2.5"/>
+            <line x1="235" y1="69" x2="222" y2="77" stroke="#e63946" stroke-width="2.5"/>
+            <line x1="235" y1="69" x2="248" y2="77" stroke="#e63946" stroke-width="2.5"/>
+            <line x1="235" y1="82" x2="227" y2="98" stroke="#e63946" stroke-width="2.5"/>
+            <line x1="235" y1="82" x2="243" y2="98" stroke="#e63946" stroke-width="2.5"/>
+            <text x="235" y="112" fill="#e63946" font-size="9" text-anchor="middle" font-family="DM Sans, sans-serif">ATT</text>
+
+            <!-- Offside line -->
+            <line x1="200" y1="8" x2="200" y2="122" stroke="#e63946" stroke-width="1" stroke-dasharray="4,3"/>
+
+            <!-- Ball at x=130 -->
+            <circle cx="130" cy="65" r="8" fill="#f4a430" stroke="#c97a00" stroke-width="1.5"/>
+            <line x1="130" y1="57" x2="130" y2="73" stroke="#c97a00" stroke-width="1"/>
+            <line x1="122" y1="65" x2="138" y2="65" stroke="#c97a00" stroke-width="1"/>
+
+            <!-- Arrow: ball to attacker -->
+            <line x1="138" y1="63" x2="226" y2="58" stroke="#f4a43080" stroke-width="1.5" stroke-dasharray="5,3"/>
+            <polygon points="226,58 218,54 220,62" fill="#f4a43080"/>
+
+            <!-- OFFSIDE label -->
+            <rect x="218" y="14" width="52" height="18" rx="4" fill="#e63946"/>
+            <text x="244" y="26" fill="white" font-size="9" font-weight="700" text-anchor="middle" font-family="DM Sans, sans-serif">OFFSIDE ✗</text>
+
+            <!-- Passer (red teammate at left) -->
+            <circle cx="80" cy="65" r="7" fill="none" stroke="#e63946" stroke-width="2"/>
+            <line x1="80" y1="72" x2="80" y2="92" stroke="#e63946" stroke-width="2"/>
+            <text x="80" y="112" fill="#e63946" font-size="9" text-anchor="middle" font-family="DM Sans, sans-serif">PASS</text>
+
+            <!-- Legend -->
+            <circle cx="20" cy="18" r="5" fill="none" stroke="#e63946" stroke-width="2"/>
+            <text x="30" y="22" fill="#e63946" font-size="9" font-family="DM Sans, sans-serif">Attack</text>
+            <circle cx="20" cy="35" r="5" fill="none" stroke="#2563eb" stroke-width="2"/>
+            <text x="30" y="39" fill="#2563eb" font-size="9" font-family="DM Sans, sans-serif">Defense</text>
+          </svg>
+        </div>
+        <div class="rcard-content">
+          <div class="rcard-rule">When the ball is passed forward to you, at least <strong style="color:var(--white)">one defender (not the keeper)</strong> must be between you and the goal. If you're past all of them at the moment the ball is played — the flag goes up. You can't camp in front of the goal waiting.</div>
+          <div class="analogy-pill">
+            <div class="analogy-sport">🏀</div>
+            <div class="analogy-txt"><strong>NBA analogy:</strong> Like an offensive player not being allowed to stand in the paint waiting for a lob pass unless a defender is also there with them.</div>
+          </div>
+          <div class="fact-pill-sm">
+            <div class="fi">⚡</div>
+            <div class="ft">VAR reviews offsides to the millimeter. Armpit and shoulder positions have overturned World Cup goals.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RULE 2: PENALTY ── -->
+    <div class="rcard" id="r1">
+      <div class="rcard-header">
+        <div class="rcard-num" style="background:rgba(244,164,48,.15);color:var(--gold)">2</div>
+        <div class="rcard-q">🎯 Penalty Kick — purest pressure in sport</div>
+        <div class="rcard-chev">▼</div>
+      </div>
+      <div class="rcard-body">
+        <div class="diagram-wrap">
+          <svg width="320" height="130" viewBox="0 0 320 130">
+            <rect width="320" height="130" fill="#0a1a10" rx="6"/>
+            <!-- Goal -->
+            <rect x="110" y="15" width="100" height="55" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+            <!-- Goal net lines -->
+            <line x1="110" y1="30" x2="210" y2="30" stroke="#ffffff20" stroke-width="1"/>
+            <line x1="110" y1="45" x2="210" y2="45" stroke="#ffffff20" stroke-width="1"/>
+            <line x1="135" y1="15" x2="135" y2="70" stroke="#ffffff20" stroke-width="1"/>
+            <line x1="160" y1="15" x2="160" y2="70" stroke="#ffffff20" stroke-width="1"/>
+            <line x1="185" y1="15" x2="185" y2="70" stroke="#ffffff20" stroke-width="1"/>
+            <!-- Goal line -->
+            <line x1="60" y1="70" x2="260" y2="70" stroke="#ffffff" stroke-width="1.5"/>
+            <!-- Penalty box -->
+            <rect x="80" y="70" width="160" height="35" fill="none" stroke="#ffffff" stroke-width="1"/>
+            <!-- Penalty spot -->
+            <circle cx="160" cy="98" r="3" fill="#ffffff"/>
+            <!-- Distance label -->
+            <line x1="160" y1="70" x2="160" y2="98" stroke="#ffffff40" stroke-width="1" stroke-dasharray="3,3"/>
+            <text x="167" y="86" fill="#ffffff60" font-size="9" font-family="DM Sans, sans-serif">12 yds</text>
+
+            <!-- Goalkeeper (blue) in goal -->
+            <circle cx="160" cy="35" r="8" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+            <line x1="160" y1="43" x2="160" y2="60" stroke="#2563eb" stroke-width="2.5"/>
+            <line x1="160" y1="50" x2="145" y2="43" stroke="#2563eb" stroke-width="2.5"/>
+            <line x1="160" y1="50" x2="175" y2="43" stroke="#2563eb" stroke-width="2.5"/>
+            <line x1="160" y1="60" x2="152" y2="72" stroke="#2563eb" stroke-width="2.5"/>
+            <line x1="160" y1="60" x2="168" y2="72" stroke="#2563eb" stroke-width="2.5"/>
+            <text x="160" y="82" fill="#2563eb" font-size="9" text-anchor="middle" font-family="DM Sans, sans-serif">GK</text>
+
+            <!-- Kicker (red) at penalty spot -->
+            <circle cx="160" cy="88" r="8" fill="none" stroke="#e63946" stroke-width="2.5"/>
+            <line x1="160" y1="96" x2="160" y2="110" stroke="#e63946" stroke-width="2.5"/>
+            <line x1="160" y1="102" x2="148" y2="108" stroke="#e63946" stroke-width="2.5"/>
+            <line x1="160" y1="102" x2="172" y2="108" stroke="#e63946" stroke-width="2.5"/>
+            <!-- Kicking leg motion -->
+            <line x1="160" y1="110" x2="150" y2="118" stroke="#e63946" stroke-width="2.5"/>
+            <line x1="160" y1="110" x2="172" y2="122" stroke="#e63946" stroke-width="2.5"/>
+            <text x="160" y="130" fill="#e63946" font-size="9" text-anchor="middle" font-family="DM Sans, sans-serif">KICKER</text>
+
+            <!-- Arrow: shot toward top corner -->
+            <line x1="160" y1="88" x2="190" y2="22" stroke="#f4a430" stroke-width="2" stroke-dasharray="5,3"/>
+            <polygon points="190,22 182,26 188,34" fill="#f4a430"/>
+
+            <!-- Ball -->
+            <circle cx="160" cy="98" r="5" fill="#f4a430" stroke="#c97a00" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="rcard-content">
+          <div class="rcard-rule">If a foul happens inside the penalty box, the opposing team gets a penalty kick. One player, one keeper, 12 yards, one shot. No pressure at all. Except the entire nation watching. Used in shootouts to decide tied knockout games after 120 minutes.</div>
+          <div class="analogy-pill">
+            <div class="analogy-sport">🏈</div>
+            <div class="analogy-txt"><strong>NFL analogy:</strong> Imagine deciding the Super Bowl with a one-on-one field goal vs just the holder. After playing for 2 hours. That's a penalty shootout.</div>
+          </div>
+          <div class="fact-pill-sm">
+            <div class="fi">⚡</div>
+            <div class="ft">England lost in penalty shootouts in 1990, 1996, 1998, and 2006. At this point it's just tradition.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RULE 3: CORNER KICK ── -->
+    <div class="rcard" id="r2">
+      <div class="rcard-header">
+        <div class="rcard-num" style="background:rgba(37,99,235,.15);color:var(--blue2)">3</div>
+        <div class="rcard-q">🚩 Corner Kick — chaos in the box</div>
+        <div class="rcard-chev">▼</div>
+      </div>
+      <div class="rcard-body">
+        <div class="diagram-wrap">
+          <svg width="320" height="130" viewBox="0 0 320 130">
+            <rect width="320" height="130" fill="#0a1a10" rx="6"/>
+            <!-- Field corner area -->
+            <line x1="20" y1="10" x2="300" y2="10" stroke="#ffffff" stroke-width="1.5"/>
+            <line x1="20" y1="10" x2="20" y2="120" stroke="#ffffff" stroke-width="1.5"/>
+            <!-- Penalty box -->
+            <rect x="20" y="10" width="120" height="70" fill="none" stroke="#ffffff" stroke-width="1"/>
+            <!-- Goal -->
+            <rect x="20" y="10" width="50" height="30" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+            <!-- Corner arc -->
+            <path d="M 20 50 A 25 25 0 0 1 45 25" fill="none" stroke="#ffffff40" stroke-width="1"/>
+            <!-- Corner flag area -->
+            <circle cx="20" cy="10" r="4" fill="none" stroke="#f4a430" stroke-width="1.5"/>
+            <line x1="20" y1="10" x2="20" y2="-5" stroke="#f4a430" stroke-width="1.5"/>
+
+            <!-- Ball at corner -->
+            <circle cx="20" cy="10" r="6" fill="#f4a430" stroke="#c97a00" stroke-width="1.5"/>
+
+            <!-- Kicker at corner -->
+            <circle cx="35" cy="28" r="7" fill="none" stroke="#e63946" stroke-width="2"/>
+            <line x1="35" y1="35" x2="35" y2="52" stroke="#e63946" stroke-width="2"/>
+            <line x1="35" y1="42" x2="25" y2="50" stroke="#e63946" stroke-width="2"/>
+            <line x1="35" y1="42" x2="45" y2="50" stroke="#e63946" stroke-width="2"/>
+            <line x1="35" y1="52" x2="28" y2="65" stroke="#e63946" stroke-width="2"/>
+            <line x1="35" y1="52" x2="42" y2="65" stroke="#e63946" stroke-width="2"/>
+
+            <!-- Curved cross arrow -->
+            <path d="M 26 10 Q 100 15 105 55" fill="none" stroke="#f4a430" stroke-width="2" stroke-dasharray="5,3"/>
+            <polygon points="105,55 96,52 100,62" fill="#f4a430"/>
+
+            <!-- Attackers in box (red) -->
+            <circle cx="90" cy="48" r="7" fill="none" stroke="#e63946" stroke-width="2"/>
+            <line x1="90" y1="55" x2="90" y2="72" stroke="#e63946" stroke-width="2"/>
+            <text x="90" y="85" fill="#e63946" font-size="8" text-anchor="middle" font-family="DM Sans, sans-serif">ATT</text>
+
+            <circle cx="115" cy="55" r="7" fill="none" stroke="#e63946" stroke-width="2"/>
+            <line x1="115" y1="62" x2="115" y2="78" stroke="#e63946" stroke-width="2"/>
+            <text x="115" y="90" fill="#e63946" font-size="8" text-anchor="middle" font-family="DM Sans, sans-serif">ATT</text>
+
+            <!-- Defenders (blue) -->
+            <circle cx="100" cy="52" r="7" fill="none" stroke="#2563eb" stroke-width="2"/>
+            <line x1="100" y1="59" x2="100" y2="75" stroke="#2563eb" stroke-width="2"/>
+            <text x="100" y="88" fill="#2563eb" font-size="8" text-anchor="middle" font-family="DM Sans, sans-serif">DEF</text>
+
+            <!-- GK -->
+            <circle cx="35" cy="18" r="7" fill="none" stroke="#2563eb" stroke-width="2"/>
+            <text x="35" y="8" fill="#2563eb" font-size="8" text-anchor="middle" font-family="DM Sans, sans-serif">GK</text>
+
+            <!-- Labels -->
+            <text x="185" y="30" fill="#f4a430" font-size="10" font-weight="700" font-family="DM Sans, sans-serif">CORNER KICK</text>
+            <text x="185" y="46" fill="#ffffff70" font-size="9" font-family="DM Sans, sans-serif">Ball crosses goal line</text>
+            <text x="185" y="60" fill="#ffffff70" font-size="9" font-family="DM Sans, sans-serif">(off defender) →</text>
+            <text x="185" y="74" fill="#ffffff70" font-size="9" font-family="DM Sans, sans-serif">attacking team kicks</text>
+            <text x="185" y="88" fill="#ffffff70" font-size="9" font-family="DM Sans, sans-serif">from the corner</text>
+          </svg>
+        </div>
+        <div class="rcard-content">
+          <div class="rcard-rule">When the ball crosses the goal line and was last touched by a <strong style="color:var(--white)">defender</strong>, the attacking team gets a corner kick from the corner of the field. They'll cross the ball into the penalty box hoping for a headed goal. Causes pure chaos.</div>
+          <div class="analogy-pill">
+            <div class="analogy-sport">🏀</div>
+            <div class="analogy-txt"><strong>NBA analogy:</strong> Like an inbound play from the corner, but instead of 5 seconds, you get a free kick into a crowd of 10 players all jumping for the ball.</div>
+          </div>
+          <div class="fact-pill-sm">
+            <div class="fi">⚡</div>
+            <div class="ft">About 2–3% of corners result in a direct goal. But the chaos they create causes many indirect goals.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RULE 4: YELLOW/RED CARD ── -->
+    <div class="rcard" id="r3">
+      <div class="rcard-header">
+        <div class="rcard-num" style="background:rgba(244,164,48,.15);color:var(--gold)">4</div>
+        <div class="rcard-q">🟨🟥 Yellow &amp; Red Cards — the punishment system</div>
+        <div class="rcard-chev">▼</div>
+      </div>
+      <div class="rcard-body">
+        <div class="diagram-wrap">
+          <svg width="320" height="130" viewBox="0 0 320 130">
+            <rect width="320" height="130" fill="#0a1a10" rx="6"/>
+
+            <!-- SCENE 1: Yellow card -->
+            <text x="70" y="18" fill="#f4a430" font-size="10" font-weight="700" text-anchor="middle" font-family="DM Sans, sans-serif">WARNING</text>
+
+            <!-- Referee (white) showing yellow -->
+            <circle cx="55" cy="40" r="8" fill="none" stroke="#ffffff" stroke-width="2"/>
+            <line x1="55" y1="48" x2="55" y2="68" stroke="#ffffff" stroke-width="2"/>
+            <line x1="55" y1="56" x2="44" y2="64" stroke="#ffffff" stroke-width="2"/>
+            <!-- Raised arm holding card -->
+            <line x1="55" y1="56" x2="68" y2="44" stroke="#ffffff" stroke-width="2"/>
+            <line x1="55" y1="68" x2="46" y2="82" stroke="#ffffff" stroke-width="2"/>
+            <line x1="55" y1="68" x2="64" y2="82" stroke="#ffffff" stroke-width="2"/>
+            <!-- Yellow card -->
+            <rect x="66" y="34" width="12" height="16" rx="2" fill="#f4a430"/>
+            <text x="75" y="92" fill="#ffffff80" font-size="9" text-anchor="middle" font-family="DM Sans, sans-serif">REF</text>
+
+            <!-- Player (red) receiving yellow -->
+            <circle cx="90" cy="40" r="8" fill="none" stroke="#e63946" stroke-width="2"/>
+            <line x1="90" y1="48" x2="90" y2="68" stroke="#e63946" stroke-width="2"/>
+            <line x1="90" y1="56" x2="79" y2="64" stroke="#e63946" stroke-width="2"/>
+            <line x1="90" y1="56" x2="101" y2="64" stroke="#e63946" stroke-width="2"/>
+            <line x1="90" y1="68" x2="82" y2="82" stroke="#e63946" stroke-width="2"/>
+            <line x1="90" y1="68" x2="98" y2="82" stroke="#e63946" stroke-width="2"/>
+            <text x="90" y="96" fill="#e63946" font-size="9" text-anchor="middle" font-family="DM Sans, sans-serif">PLAYER</text>
+
+            <!-- Arrow 2 yellows = red -->
+            <text x="134" y="55" fill="#ffffff60" font-size="20" text-anchor="middle">+</text>
+            <!-- Yellow 1 -->
+            <rect x="108" y="30" width="14" height="19" rx="2" fill="#f4a430"/>
+            <!-- Yellow 2 -->
+            <rect x="125" y="30" width="14" height="19" rx="2" fill="#f4a430"/>
+            <text x="118" y="65" fill="#f4a430" font-size="9" text-anchor="middle" font-family="DM Sans, sans-serif">2 yellows</text>
+            <!-- Equals -->
+            <text x="152" y="45" fill="#ffffff80" font-size="16" text-anchor="middle">=</text>
+            <!-- Red card -->
+            <rect x="162" y="28" width="16" height="22" rx="2" fill="#e63946"/>
+            <text x="170" y="65" fill="#e63946" font-size="9" text-anchor="middle" font-family="DM Sans, sans-serif">RED!</text>
+
+            <!-- Divider -->
+            <line x1="195" y1="10" x2="195" y2="120" stroke="#ffffff15" stroke-width="1"/>
+
+            <!-- SCENE 2: Red = play 10 vs 11 -->
+            <text x="258" y="18" fill="#e63946" font-size="10" font-weight="700" text-anchor="middle" font-family="DM Sans, sans-serif">10 vs 11</text>
+
+            <!-- 4 remaining red players -->
+            <circle cx="212" cy="45" r="6" fill="none" stroke="#e63946" stroke-width="1.5"/>
+            <circle cx="228" cy="45" r="6" fill="none" stroke="#e63946" stroke-width="1.5"/>
+            <circle cx="212" cy="70" r="6" fill="none" stroke="#e63946" stroke-width="1.5"/>
+            <circle cx="228" cy="70" r="6" fill="none" stroke="#e63946" stroke-width="1.5"/>
+            <!-- Ejected player walking off -->
+            <circle cx="245" cy="100" r="6" fill="none" stroke="#e63946" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <line x1="260" y1="95" x2="280" y2="92" stroke="#e63946" stroke-width="1" stroke-dasharray="3,2"/>
+            <text x="265" y="110" fill="#e63946" font-size="8" font-family="DM Sans, sans-serif">OUT →</text>
+
+            <!-- 5 blue players -->
+            <circle cx="256" cy="40" r="6" fill="none" stroke="#2563eb" stroke-width="1.5"/>
+            <circle cx="274" cy="40" r="6" fill="none" stroke="#2563eb" stroke-width="1.5"/>
+            <circle cx="256" cy="62" r="6" fill="none" stroke="#2563eb" stroke-width="1.5"/>
+            <circle cx="274" cy="62" r="6" fill="none" stroke="#2563eb" stroke-width="1.5"/>
+            <circle cx="290" cy="51" r="6" fill="none" stroke="#2563eb" stroke-width="1.5"/>
+
+            <text x="258" y="86" fill="#2563eb" font-size="8" text-anchor="middle" font-family="DM Sans, sans-serif">5 players</text>
+            <text x="220" y="86" fill="#e63946" font-size="8" text-anchor="middle" font-family="DM Sans, sans-serif">4 players</text>
+          </svg>
+        </div>
+        <div class="rcard-content">
+          <div class="rcard-rule"><strong style="color:var(--gold)">Yellow card</strong> = official warning for a foul, time-wasting, or diving. Two yellows in the same match = automatic red. <strong style="color:var(--red)">Red card</strong> = immediate ejection, no replacement. Your team plays the rest of the match with 10 players vs 11 — a massive disadvantage that often decides games.</div>
+          <div class="analogy-pill">
+            <div class="analogy-sport">🏒</div>
+            <div class="analogy-txt"><strong>NHL analogy:</strong> Like a power play penalty — except it lasts the whole rest of the game and you can never get the player back.</div>
+          </div>
+          <div class="fact-pill-sm">
+            <div class="fi">⚡</div>
+            <div class="ft">Zinedine Zidane headbutted a player in the 2006 World Cup FINAL and received a red card. France lost. He is still the most celebrated player in French history.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RULE 5: FREE KICK ── -->
+    <div class="rcard" id="r4">
+      <div class="rcard-header">
+        <div class="rcard-num" style="background:rgba(34,197,94,.12);color:var(--green)">5</div>
+        <div class="rcard-q">🏃 Free Kick — direct &amp; indirect</div>
+        <div class="rcard-chev">▼</div>
+      </div>
+      <div class="rcard-body">
+        <div class="diagram-wrap">
+          <svg width="320" height="130" viewBox="0 0 320 130">
+            <rect width="320" height="130" fill="#0a1a10" rx="6"/>
+            <!-- Goal -->
+            <rect x="230" y="20" width="50" height="60" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+            <!-- Goal line -->
+            <line x1="40" y1="80" x2="280" y2="80" stroke="#ffffff" stroke-width="1"/>
+
+            <!-- Wall of defenders (blue) -->
+            <circle cx="165" cy="48" r="7" fill="none" stroke="#2563eb" stroke-width="2"/>
+            <line x1="165" y1="55" x2="165" y2="72" stroke="#2563eb" stroke-width="2"/>
+            <line x1="165" y1="62" x2="155" y2="70" stroke="#2563eb" stroke-width="2"/>
+            <line x1="165" y1="62" x2="175" y2="70" stroke="#2563eb" stroke-width="2"/>
+            <line x1="165" y1="72" x2="158" y2="82" stroke="#2563eb" stroke-width="2"/>
+            <line x1="165" y1="72" x2="172" y2="82" stroke="#2563eb" stroke-width="2"/>
+
+            <circle cx="180" cy="45" r="7" fill="none" stroke="#2563eb" stroke-width="2"/>
+            <line x1="180" y1="52" x2="180" y2="69" stroke="#2563eb" stroke-width="2"/>
+            <line x1="180" y1="59" x2="170" y2="67" stroke="#2563eb" stroke-width="2"/>
+            <line x1="180" y1="59" x2="190" y2="67" stroke="#2563eb" stroke-width="2"/>
+
+            <circle cx="195" cy="48" r="7" fill="none" stroke="#2563eb" stroke-width="2"/>
+            <line x1="195" y1="55" x2="195" y2="72" stroke="#2563eb" stroke-width="2"/>
+
+            <text x="180" y="96" fill="#2563eb" font-size="9" text-anchor="middle" font-family="DM Sans, sans-serif">WALL (min. 10 yds)</text>
+
+            <!-- GK -->
+            <circle cx="255" cy="45" r="7" fill="none" stroke="#2563eb" stroke-width="2"/>
+            <text x="255" y="36" fill="#2563eb" font-size="8" text-anchor="middle" font-family="DM Sans, sans-serif">GK</text>
+
+            <!-- Kicker (red) -->
+            <circle cx="105" cy="65" r="8" fill="none" stroke="#e63946" stroke-width="2.5"/>
+            <line x1="105" y1="73" x2="105" y2="90" stroke="#e63946" stroke-width="2.5"/>
+            <line x1="105" y1="80" x2="93" y2="88" stroke="#e63946" stroke-width="2.5"/>
+            <!-- Kicking leg forward -->
+            <line x1="105" y1="80" x2="120" y2="88" stroke="#e63946" stroke-width="2.5"/>
+            <line x1="105" y1="90" x2="96" y2="102" stroke="#e63946" stroke-width="2.5"/>
+            <line x1="105" y1="90" x2="115" y2="102" stroke="#e63946" stroke-width="2.5"/>
+
+            <!-- Ball -->
+            <circle cx="120" cy="75" r="6" fill="#f4a430" stroke="#c97a00" stroke-width="1.5"/>
+
+            <!-- Curved shot over wall -->
+            <path d="M 126 72 Q 155 25 240 38" fill="none" stroke="#f4a430" stroke-width="2" stroke-dasharray="5,3"/>
+            <polygon points="240,38 232,32 234,42" fill="#f4a430"/>
+
+            <!-- "OVER" label -->
+            <text x="168" y="28" fill="#f4a43090" font-size="9" font-family="DM Sans, sans-serif">curve over wall</text>
+          </svg>
+        </div>
+        <div class="rcard-content">
+          <div class="rcard-rule">Awarded when a foul occurs outside the penalty box. <strong style="color:var(--white)">Direct free kick</strong> = can shoot straight at goal. <strong style="color:var(--white)">Indirect</strong> = must touch another player first. The defensive team builds a "wall" of players at least 10 yards away to block the shot.</div>
+          <div class="analogy-pill">
+            <div class="analogy-sport">🏈</div>
+            <div class="analogy-txt"><strong>NFL analogy:</strong> Like a field goal attempt — but the opposing team can put a human wall between you and the goalposts. You have to kick around or over it.</div>
+          </div>
+          <div class="fact-pill-sm">
+            <div class="fi">⚡</div>
+            <div class="ft">Cristiano Ronaldo has scored 50+ free kick goals in his career. His signature knuckleball technique makes it move unpredictably in the air.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RULE 6: GOALKEEPER ── -->
+    <div class="rcard" id="r5">
+      <div class="rcard-header">
+        <div class="rcard-num" style="background:rgba(167,139,250,.12);color:#a78bfa">6</div>
+        <div class="rcard-q">🧤 The Goalkeeper — the one with hands</div>
+        <div class="rcard-chev">▼</div>
+      </div>
+      <div class="rcard-body">
+        <div class="diagram-wrap">
+          <svg width="320" height="130" viewBox="0 0 320 130">
+            <rect width="320" height="130" fill="#0a1a10" rx="6"/>
+            <!-- Goal -->
+            <rect x="130" y="15" width="80" height="45" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+            <!-- Goal line -->
+            <line x1="20" y1="60" x2="300" y2="60" stroke="#ffffff" stroke-width="1"/>
+            <!-- Penalty box -->
+            <rect x="80" y="60" width="160" height="50" fill="none" stroke="#ffffff" stroke-width="1"/>
+            <!-- 6 yard box -->
+            <rect x="150" y="60" width="40" height="18" fill="none" stroke="#ffffff50" stroke-width="1"/>
+
+            <!-- GK (purple/unique) in goal -->
+            <circle cx="170" cy="35" r="9" fill="none" stroke="#a78bfa" stroke-width="2.5"/>
+            <line x1="170" y1="44" x2="170" y2="60" stroke="#a78bfa" stroke-width="2.5"/>
+            <!-- Arms spread wide (catching) -->
+            <line x1="170" y1="50" x2="148" y2="42" stroke="#a78bfa" stroke-width="2.5"/>
+            <line x1="170" y1="50" x2="192" y2="42" stroke="#a78bfa" stroke-width="2.5"/>
+            <line x1="170" y1="60" x2="160" y2="74" stroke="#a78bfa" stroke-width="2.5"/>
+            <line x1="170" y1="60" x2="180" y2="74" stroke="#a78bfa" stroke-width="2.5"/>
+            <text x="170" y="86" fill="#a78bfa" font-size="9" text-anchor="middle" font-family="DM Sans, sans-serif">GK (hands OK!)</text>
+
+            <!-- CAN label inside box -->
+            <rect x="85" y="65" width="70" height="20" rx="3" fill="rgba(167,139,250,.1)" stroke="rgba(167,139,250,.3)" stroke-width="1"/>
+            <text x="120" y="79" fill="#a78bfa" font-size="9" text-anchor="middle" font-family="DM Sans, sans-serif">✓ CAN USE HANDS</text>
+
+            <!-- CANNOT label outside box -->
+            <rect x="20" y="65" width="55" height="20" rx="3" fill="rgba(230,57,70,.1)" stroke="rgba(230,57,70,.3)" stroke-width="1"/>
+            <text x="47" y="79" fill="#e63946" font-size="9" text-anchor="middle" font-family="DM Sans, sans-serif">✗ NO HANDS</text>
+
+            <!-- GK outside box -->
+            <circle cx="47" cy="100" r="7" fill="none" stroke="#a78bfa" stroke-width="2" stroke-dasharray="3,2"/>
+            <text x="47" y="118" fill="#a78bfa80" font-size="8" text-anchor="middle" font-family="DM Sans, sans-serif">GK outside = foul</text>
+
+            <!-- Arrow showing boundary -->
+            <line x1="80" y1="55" x2="80" y2="115" stroke="#ffffff40" stroke-width="1" stroke-dasharray="4,3"/>
+            <line x1="240" y1="55" x2="240" y2="115" stroke="#ffffff40" stroke-width="1" stroke-dasharray="4,3"/>
+          </svg>
+        </div>
+        <div class="rcard-content">
+          <div class="rcard-rule">The goalkeeper is the only player allowed to use their hands — but <strong style="color:var(--white)">only inside their own penalty box</strong>. The moment they step outside the box and touch the ball with their hands, it's a foul and a direct free kick for the opponent.</div>
+          <div class="analogy-pill">
+            <div class="analogy-sport">🏀</div>
+            <div class="analogy-txt"><strong>NBA analogy:</strong> Like having one player who can catch and throw the ball — but only in the paint. The second they step outside the three-point line, they have to dribble like everyone else.</div>
+          </div>
+          <div class="fact-pill-sm">
+            <div class="fi">⚡</div>
+            <div class="ft">The goalkeeper jersey is a different color from both teams so the referee can always identify them instantly. Usually bright green or yellow — intentionally ugly.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RULE 7: THROW-IN ── -->
+    <div class="rcard" id="r6">
+      <div class="rcard-header">
+        <div class="rcard-num" style="background:rgba(244,164,48,.12);color:var(--gold)">7</div>
+        <div class="rcard-q">🤲 Throw-In — the only time outfield players touch the ball</div>
+        <div class="rcard-chev">▼</div>
+      </div>
+      <div class="rcard-body">
+        <div class="diagram-wrap">
+          <svg width="320" height="130" viewBox="0 0 320 130">
+            <rect width="320" height="130" fill="#0a1a10" rx="6"/>
+            <!-- Sideline -->
+            <line x1="20" y1="10" x2="300" y2="10" stroke="#ffffff" stroke-width="2"/>
+            <text x="160" y="8" fill="#ffffff60" font-size="8" text-anchor="middle" font-family="DM Sans, sans-serif">SIDELINE (touchline)</text>
+
+            <!-- Ball went out marker -->
+            <circle cx="160" cy="8" r="5" fill="#e63946" stroke="#c93040" stroke-width="1.5"/>
+            <text x="160" y="25" fill="#e6394680" font-size="9" text-anchor="middle" font-family="DM Sans, sans-serif">ball out here</text>
+
+            <!-- Player throwing (CORRECT - two hands, over head, feet on ground) -->
+            <text x="78" y="42" fill="#22c55e" font-size="9" text-anchor="middle" font-family="DM Sans, sans-serif">✓ CORRECT</text>
+            <circle cx="78" cy="58" r="8" fill="none" stroke="#e63946" stroke-width="2"/>
+            <!-- Both arms raised over head -->
+            <line x1="78" y1="66" x2="78" y2="86" stroke="#e63946" stroke-width="2"/>
+            <line x1="78" y1="72" x2="64" y2="56" stroke="#e63946" stroke-width="2"/>
+            <line x1="78" y1="72" x2="92" y2="56" stroke="#e63946" stroke-width="2"/>
+            <!-- Ball over head -->
+            <circle cx="78" cy="46" r="5" fill="#f4a430" stroke="#c97a00" stroke-width="1.5"/>
+            <line x1="78" y1="86" x2="70" y2="100" stroke="#e63946" stroke-width="2"/>
+            <line x1="78" y1="86" x2="86" y2="100" stroke="#e63946" stroke-width="2"/>
+            <text x="78" y="115" fill="#e63946" font-size="8" text-anchor="middle" font-family="DM Sans, sans-serif">both feet</text>
+            <text x="78" y="124" fill="#e63946" font-size="8" text-anchor="middle" font-family="DM Sans, sans-serif">on ground</text>
+
+            <!-- Arrow - throw -->
+            <path d="M 83 47 Q 130 30 160 45" fill="none" stroke="#f4a430" stroke-width="2" stroke-dasharray="4,3"/>
+            <polygon points="160,45 151,40 153,50" fill="#f4a430"/>
+
+            <!-- Receiver -->
+            <circle cx="175" cy="65" r="8" fill="none" stroke="#e63946" stroke-width="2"/>
+            <line x1="175" y1="73" x2="175" y2="90" stroke="#e63946" stroke-width="2"/>
+            <line x1="175" y1="80" x2="163" y2="88" stroke="#e63946" stroke-width="2"/>
+            <line x1="175" y1="80" x2="187" y2="88" stroke="#e63946" stroke-width="2"/>
+            <line x1="175" y1="90" x2="167" y2="104" stroke="#e63946" stroke-width="2"/>
+            <line x1="175" y1="90" x2="183" y2="104" stroke="#e63946" stroke-width="2"/>
+
+            <!-- WRONG example -->
+            <text x="256" y="42" fill="#e63946" font-size="9" text-anchor="middle" font-family="DM Sans, sans-serif">✗ WRONG</text>
+            <circle cx="256" cy="58" r="8" fill="none" stroke="#e63946" stroke-width="2"/>
+            <!-- One-handed throw -->
+            <line x1="256" y1="66" x2="256" y2="84" stroke="#e63946" stroke-width="2"/>
+            <line x1="256" y1="73" x2="244" y2="80" stroke="#e63946" stroke-width="2"/>
+            <line x1="256" y1="73" x2="268" y2="60" stroke="#e63946" stroke-width="2"/>
+            <!-- Ball one hand -->
+            <circle cx="274" cy="52" r="5" fill="#f4a43060" stroke="#c97a0060" stroke-width="1.5"/>
+            <!-- X mark -->
+            <line x1="268" y1="46" x2="280" y2="58" stroke="#e63946" stroke-width="2"/>
+            <line x1="280" y1="46" x2="268" y2="58" stroke="#e63946" stroke-width="2"/>
+            <text x="256" y="100" fill="#e6394680" font-size="8" text-anchor="middle" font-family="DM Sans, sans-serif">one hand = foul</text>
+          </svg>
+        </div>
+        <div class="rcard-content">
+          <div class="rcard-rule">When the ball crosses the sideline (touchline), the opposing team gets a throw-in. Must be thrown with <strong style="color:var(--white)">both hands, over the head, with both feet on the ground</strong>. The thrower cannot touch the ball again until another player touches it first.</div>
+          <div class="analogy-pill">
+            <div class="analogy-sport">🏈</div>
+            <div class="analogy-txt"><strong>NFL analogy:</strong> Like an out-of-bounds restart — except instead of the ref spotting the ball, a player physically throws it back into play using very specific rules.</div>
+          </div>
+          <div class="fact-pill-sm">
+            <div class="fi">⚡</div>
+            <div class="ft">Some players can throw the ball over 40 meters — essentially a long pass. It's a trained skill, not just a restart.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RULE 8: GOAL KICK ── -->
+    <div class="rcard" id="r7">
+      <div class="rcard-header">
+        <div class="rcard-num" style="background:rgba(29,114,184,.12);color:var(--blue2)">8</div>
+        <div class="rcard-q">👟 Goal Kick — restarting from the back</div>
+        <div class="rcard-chev">▼</div>
+      </div>
+      <div class="rcard-body">
+        <div class="diagram-wrap">
+          <svg width="320" height="130" viewBox="0 0 320 130">
+            <rect width="320" height="130" fill="#0a1a10" rx="6"/>
+            <!-- Field -->
+            <line x1="20" y1="120" x2="300" y2="120" stroke="#ffffff" stroke-width="1.5"/>
+            <line x1="20" y1="10" x2="20" y2="120" stroke="#ffffff" stroke-width="1.5"/>
+            <!-- Goal -->
+            <rect x="20" y="40" width="18" height="50" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+            <!-- Penalty box -->
+            <rect x="20" y="28" width="80" height="92" fill="none" stroke="#ffffff" stroke-width="1"/>
+            <!-- 6 yard box -->
+            <rect x="20" y="55" width="30" height="40" fill="none" stroke="#ffffff50" stroke-width="1"/>
+
+            <!-- GK placing ball -->
+            <circle cx="65" cy="92" r="7" fill="none" stroke="#a78bfa" stroke-width="2"/>
+            <line x1="65" y1="99" x2="65" y2="112" stroke="#a78bfa" stroke-width="2"/>
+            <line x1="65" y1="104" x2="55" y2="112" stroke="#a78bfa" stroke-width="2"/>
+            <!-- Kicking motion -->
+            <line x1="65" y1="104" x2="80" y2="112" stroke="#a78bfa" stroke-width="2"/>
+            <line x1="65" y1="112" x2="57" y2="122" stroke="#a78bfa" stroke-width="2"/>
+
+            <!-- Ball at 6-yard box -->
+            <circle cx="52" cy="105" r="5" fill="#f4a430" stroke="#c97a00" stroke-width="1.5"/>
+
+            <!-- Long kick arrow -->
+            <path d="M 57 102 Q 150 50 240 70" fill="none" stroke="#f4a430" stroke-width="2" stroke-dasharray="5,4"/>
+            <polygon points="240,70 230,65 233,75" fill="#f4a430"/>
+
+            <!-- Opponents must be outside box -->
+            <circle cx="130" cy="80" r="7" fill="none" stroke="#e63946" stroke-width="2"/>
+            <line x1="130" y1="87" x2="130" y2="100" stroke="#e63946" stroke-width="2"/>
+            <circle cx="155" cy="75" r="7" fill="none" stroke="#e63946" stroke-width="2"/>
+            <line x1="155" y1="82" x2="155" y2="95" stroke="#e63946" stroke-width="2"/>
+            <circle cx="240" cy="70" r="7" fill="none" stroke="#e63946" stroke-width="2"/>
+
+            <!-- Outside box label -->
+            <rect x="95" y="30" width="110" height="16" rx="3" fill="rgba(230,57,70,.1)" stroke="rgba(230,57,70,.2)" stroke-width="1"/>
+            <text x="150" y="42" fill="#e63946" font-size="9" text-anchor="middle" font-family="DM Sans, sans-serif">opponents outside box</text>
+
+            <text x="65" y="28" fill="#a78bfa" font-size="9" text-anchor="middle" font-family="DM Sans, sans-serif">GOAL KICK</text>
+            <text x="65" y="40" fill="#ffffff60" font-size="8" text-anchor="middle" font-family="DM Sans, sans-serif">from 6-yard box</text>
+          </svg>
+        </div>
+        <div class="rcard-content">
+          <div class="rcard-rule">When the attacking team kicks the ball over the goal line (but no goal), the defending team gets a goal kick. Usually taken by the goalkeeper from the six-yard box. <strong style="color:var(--white)">All opponents must be outside the penalty box</strong> until the ball is kicked.</div>
+          <div class="analogy-pill">
+            <div class="analogy-sport">⚾</div>
+            <div class="analogy-txt"><strong>MLB analogy:</strong> Like a pitcher's free pass to reset — the goalkeeper gets a free kick to restart play and distribute the ball. It's often the start of a team's attack.</div>
+          </div>
+          <div class="fact-pill-sm">
+            <div class="fi">⚡</div>
+            <div class="ft">Modern goalkeepers are trained like field players — some of the most accurate long-range kickers in the game wear gloves.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- .sa -->
+  <div class="bnav">
+    <div class="ni off" data-goto="home"><div class="ni-ico">⚽</div><div class="ni-lbl">Scores</div><div class="ni-dot"></div></div>
+    <div class="ni on"><div class="ni-ico">🎓</div><div class="ni-lbl">101</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="chat"><div class="ni-ico">🤙</div><div class="ni-lbl">Ask AI</div><div class="ni-dot"></div></div>
+    <div class="ni off"><div class="ni-ico">💡</div><div class="ni-lbl">Facts</div><div class="ni-dot"></div></div>
+    <div class="ni off"><div class="ni-ico">🔔</div><div class="ni-lbl">Alerts</div><div class="ni-dot"></div></div>
+  </div>
+</div>
+
+
+<div class="scr" id="s-chat">
+  <div class="pad44"></div>
+  <div class="chat-hero">
+    <div class="ch-ico">🤙</div>
+    <div class="ch-title">SOCCER101 AI</div>
+    <div class="ch-sub">Your personal soccer guide. No dumb questions.</div>
+  </div>
+  <div class="sugg-row">
+    <div class="sg" data-sugg="Why is it called soccer in America?">Why &quot;soccer&quot;?</div>
+    <div class="sg" data-sugg="What happens when a game ends tied in a knockout round?">Tied game?</div>
+    <div class="sg" data-sugg="Explain offsides like I am 5 years old">Offsides ELI5</div>
+    <div class="sg" data-sugg="Why do soccer players flop and fake injuries?">Why flop?</div>
+    <div class="sg" data-sugg="Messi or Ronaldo — who is the GOAT?">GOAT debate?</div>
+  </div>
+  <div class="chat-msgs" id="chatMsgs">
+    <div class="msg msg-a"><div class="bubble">Hey! I'm SOCCER101 — your World Cup 2026 guide 🏆 Ask me anything. I explain soccer using NFL, NBA &amp; MLB analogies. No judgment whatsoever.</div><div class="msg-meta">SOCCER101 AI · now</div></div>
+  </div>
+  <div class="chat-input-area">
+    <textarea class="ci" id="ci" placeholder="e.g. Why is there no timeout??" rows="1"></textarea>
+    <button class="send" id="sendBtn">↑</button>
+  </div>
+  <div class="bnav" style="position:absolute;bottom:0">
+    <div class="ni off" data-goto="home"><div class="ni-ico">⚽</div><div class="ni-lbl">Scores</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="bracket"><div class="ni-ico">🏆</div><div class="ni-lbl">Bracket</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="facts"><div class="ni-ico">💡</div><div class="ni-lbl">Facts</div><div class="ni-dot"></div></div>
+    <div class="ni on"><div class="ni-ico">🤙</div><div class="ni-lbl">Ask AI</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="notif"><div class="ni-ico">🔔</div><div class="ni-lbl">Alerts</div><div class="ni-dot"></div></div>
+  </div>
+</div>
+
+<!-- ⑪ NOTIFICATIONS -->
+<div class="scr" id="s-notif">
+  <div class="pad44"></div>
+  <div class="shdr"><div class="back" data-goto="home">←</div><div class="shdr-title">Alerts</div></div>
+  <div class="sa">
+    <div style="background:linear-gradient(135deg,rgba(230,57,70,.1),rgba(37,99,235,.1));border:1px solid rgba(230,57,70,.2);border-radius:13px;padding:16px;margin-bottom:14px;text-align:center">
+      <div style="font-size:30px;margin-bottom:6px">🔔</div>
+      <div style="font-family:'Bebas Neue',cursive;font-size:18px;letter-spacing:2px;color:#fff;margin-bottom:3px">NEVER MISS A GOAL.</div>
+      <div style="font-size:11px;color:var(--muted);line-height:1.6">Live scores. Real-time updates. Cleaner than Twitter.</div>
+    </div>
+    <div class="sec">Match Alerts</div>
+    <div class="trow"><div class="tr-left"><div class="tr-ico">⚽</div><div><div class="tr-t">Goals</div><div class="tr-s">Instant push on every goal</div></div></div><div class="tog on"></div></div>
+    <div class="trow"><div class="tr-left"><div class="tr-ico">🟥</div><div><div class="tr-t">Red Cards</div><div class="tr-s">Player sent off</div></div></div><div class="tog on"></div></div>
+    <div class="trow"><div class="tr-left"><div class="tr-ico">🏁</div><div><div class="tr-t">Full Time</div><div class="tr-s">Final score alert</div></div></div><div class="tog on"></div></div>
+    <div class="trow"><div class="tr-left"><div class="tr-ico">🎯</div><div><div class="tr-t">Penalties</div><div class="tr-s">Shootout starting!</div></div></div><div class="tog on"></div></div>
+    <div class="sec" style="margin-top:14px">Follow Teams</div>
+    <div class="team-grid">
+      <div class="tch sel"><span class="tch-f">🇺🇸</span><span class="tch-n">USA</span><span class="tch-c">✓</span></div>
+      <div class="tch"><span class="tch-f">🇧🇷</span><span class="tch-n">Brazil</span><span class="tch-c">✓</span></div>
+      <div class="tch"><span class="tch-f">🇦🇷</span><span class="tch-n">Argentina</span><span class="tch-c">✓</span></div>
+      <div class="tch"><span class="tch-f">🇫🇷</span><span class="tch-n">France</span><span class="tch-c">✓</span></div>
+      <div class="tch"><span class="tch-f">🇲🇽</span><span class="tch-n">Mexico</span><span class="tch-c">✓</span></div>
+      <div class="tch"><span class="tch-f">🇵🇹</span><span class="tch-n">Portugal</span><span class="tch-c">✓</span></div>
+    </div>
+  </div>
+  <div class="bnav">
+    <div class="ni off" data-goto="home"><div class="ni-ico">⚽</div><div class="ni-lbl">Scores</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="bracket"><div class="ni-ico">🏆</div><div class="ni-lbl">Bracket</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="facts"><div class="ni-ico">💡</div><div class="ni-lbl">Facts</div><div class="ni-dot"></div></div>
+    <div class="ni off" data-goto="chat"><div class="ni-ico">🤙</div><div class="ni-lbl">Ask AI</div><div class="ni-dot"></div></div>
+    <div class="ni on"><div class="ni-ico">🔔</div><div class="ni-lbl">Alerts</div><div class="ni-dot"></div></div>
+  </div>
+</div>
+
+</div></div>
+
+<!-- ANNOTATION PANEL -->
+<div class="ann">
+  <div>
+    <div style="font-family:'Bebas Neue',cursive;font-size:17px;letter-spacing:2px;color:var(--muted);margin-bottom:5px">SOCCER101 v5</div>
+    <p style="font-size:11px;color:var(--muted);line-height:1.6">🇺🇸 American red &amp; blue design · 11 ekran · script hatası yok</p>
+  </div>
+  <div class="ann-card">
+    <div class="ann-title">🎨 Yeni Tasarım</div>
+    <div class="ann-row"><span class="ann-dot">→</span><div><strong>Kırmızı (#e63946)</strong>CTA butonlar, canlı badge, accent</div></div>
+    <div class="ann-row"><span class="ann-dot">→</span><div><strong>Mavi (#2563eb)</strong>Bracket, istatistik çubukları, tab</div></div>
+    <div class="ann-row"><span class="ann-dot">→</span><div><strong>Splash</strong>Yıldız arka plan + Amerikan bayrağı renk şeridi</div></div>
+    <div class="ann-row"><span class="ann-dot">→</span><div><strong>Ticker</strong>Kırmızı gradient USA banner</div></div>
+  </div>
+  <div class="ann-card">
+    <div class="ann-title">🛠 Script Fixes</div>
+    <div class="ann-row"><span class="ann-dot">✓</span><div>Tüm event handler'lar addEventListener ile</div></div>
+    <div class="ann-row"><span class="ann-dot">✓</span><div>data-goto / data-screen attribute routing</div></div>
+    <div class="ann-row"><span class="ann-dot">✓</span><div>Player switcher temiz JS objesi</div></div>
+    <div class="ann-row"><span class="ann-dot">✓</span><div>Chat history array düzgün yönetiliyor</div></div>
+    <div class="ann-row"><span class="ann-dot">✓</span><div>Toggle'lar event delegation ile çalışıyor</div></div>
+  </div>
+  <div class="fb">
+    <strong>💬 Feedback ver:</strong>
+    "Kırmızı çok agresif, yumuşat"<br>
+    "Splash ekranı daha büyük logo olsun"<br>
+    "Bottom nav'a farklı ikonlar koy"<br>
+    Söyle, anında güncellerim.
+  </div>
+</div>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── PLAYER DATA ────────────────────────────────────────
+  const PLAYERS = {
+    pulisic: {
+      avatar: '⚡', name: 'PULISIC', sub: '🇺🇸 USA · AC Milan',
+      pos: 'FW · #10', posBg: 'rgba(230,57,70,.15)', posClr: 'var(--red)',
+      g: '3', a: '2', r: '8.1', wc: '6',
+      age: '25', club: 'AC Milan (Italy)', born: 'Hershey, Pennsylvania', caps: '68', foot: 'Left',
+      about: 'Christian Pulisic is America\'s most famous soccer player — nicknamed "Captain America." He was the first American to win the UEFA Champions League in 2021. At 2026 he\'s carrying the hopes of the host nation.',
+      career: [
+        ['2021','🏆','Champions League Winner','Chelsea FC · First American ever'],
+        ['2022','⚽','World Cup Qatar','USA R16 · Scored vs Iran'],
+        ['2023','🔄','AC Milan Transfer','Chelsea → Serie A'],
+        ['2024','🥇','Copa America','3 goals as USA host'],
+        ['2026','🌟','World Cup 2026','USA captain · Group stage']
+      ],
+      facts: [
+        'Born in <strong>Hershey, Pennsylvania</strong> — the chocolate town. Family lived behind the local soccer stadium.',
+        'Signed with <strong>Borussia Dortmund at 16</strong> — became their youngest ever Bundesliga scorer.',
+        'Chelsea paid <strong>£58 million</strong> in 2019 — most expensive American player at the time.',
+        'His fan club <strong>"Pulisic\'s People"</strong> follows him around the world.'
+      ]
+    },
+    ronaldo: {
+      avatar: '👑', name: 'RONALDO', sub: '🇵🇹 Portugal · Al Nassr',
+      pos: 'FW · #7', posBg: 'rgba(37,99,235,.15)', posClr: 'var(--blue2)',
+      g: '130', a: '44', r: '9.1', wc: '22',
+      age: '41', club: 'Al Nassr (Saudi Arabia)', born: 'Funchal, Madeira', caps: '213', foot: 'Right',
+      about: 'Cristiano Ronaldo is the all-time top scorer in international football with 130+ goals. He has played in 5 World Cups and won almost every major trophy available. At 41, he is still competing.',
+      career: [
+        ['2008','🏆','Champions League Winner','Man Utd · 1st of 5 UCL titles'],
+        ['2016','🏆','EURO 2016 Champion','Portugal\'s first major trophy'],
+        ['2018','⚽','Hat-trick vs Spain','One of greatest WC performances'],
+        ['2022','⚽','5th World Cup','All-time record appearances'],
+        ['2026','🌟','World Cup 2026','6th WC at age 41']
+      ],
+      facts: [
+        'Scored <strong>130+ international goals</strong> — more than any player in history.',
+        'Won the <strong>Ballon d\'Or 5 times</strong>, tying Messi.',
+        'Moved a Coca-Cola bottle at a press conference. <strong>Company\'s market cap fell $4 billion</strong>.',
+        'Has his own <strong>museum in Madeira</strong>, including a wax statue of himself.'
+      ]
+    },
+    mbappe: {
+      avatar: '⚡', name: 'MBAPPÉ', sub: '🇫🇷 France · Real Madrid',
+      pos: 'FW · #10', posBg: 'rgba(167,139,250,.15)', posClr: '#a78bfa',
+      g: '8', a: '3', r: '8.8', wc: '12',
+      age: '25', club: 'Real Madrid (Spain)', born: 'Paris, France', caps: '82', foot: 'Right',
+      about: 'Kylian Mbappé is the most exciting player in the world — pacey, clinical, only 25. Won the World Cup in 2018 at just 19. He is the heir apparent to Messi and Ronaldo.',
+      career: [
+        ['2018','🏆','World Cup Winner at 19','France vs Croatia · 4 goals'],
+        ['2022','🌟','WC Final hat-trick','Lost to Argentina on pens · 8 goals'],
+        ['2024','🔄','Real Madrid Transfer','Free from PSG'],
+        ['2024','😤','Broken nose EURO 2024','Wore mask — still played, still scored'],
+        ['2026','🌟','World Cup 2026','Favourite for Golden Boot']
+      ],
+      facts: [
+        'Donated his <strong>entire ~€500k France WC salary</strong> to a children\'s charity.',
+        'Second teenager to score in a WC Final after <strong>Pelé in 1958</strong>.',
+        'Sprint speed clocked at <strong>36 km/h</strong> — faster than most Olympic sprinters.',
+        'Has been offered <strong>Hollywood film roles</strong> multiple times.'
+      ]
+    },
+    messi: {
+      avatar: '🐐', name: 'MESSI', sub: '🇦🇷 Argentina · Inter Miami',
+      pos: 'FW · #10', posBg: 'rgba(34,197,94,.15)', posClr: 'var(--green)',
+      g: '109', a: '56', r: '9.4', wc: '26',
+      age: '37', club: 'Inter Miami (USA)', born: 'Rosario, Argentina', caps: '191', foot: 'Left',
+      about: 'Lionel Messi is widely considered the greatest footballer of all time. Won everything possible — including the 2022 World Cup. Now plays in MLS for Inter Miami, USA.',
+      career: [
+        ['2008','🥇','Olympic Gold','Argentina · First major trophy'],
+        ['2014','🥈','WC Final loss','Argentina vs Germany'],
+        ['2021','🏆','Copa America Winner','First major int\'l trophy'],
+        ['2022','🏆','WORLD CUP WINNER','Greatest WC performance ever'],
+        ['2023','🌟','Joins Inter Miami','Moves to MLS']
+      ],
+      facts: [
+        'Won the <strong>Ballon d\'Or 8 times</strong> — more than any player in history.',
+        'Barcelona discovered him at <strong>12 years old</strong> and paid for his growth hormone treatment.',
+        'Only player to win <strong>WC + Copa America + Champions League + Ballon d\'Or</strong>.',
+        'His youngest son Ciro was <strong>born during the 2018 World Cup</strong>.'
+      ]
+    }
+  };
+
+  // ── SCREEN NAVIGATION ──────────────────────────────────
+  const screenNumMap = {
+    splash: '①', onboard: '②', home: '③', match: '④',
+    bracket: '⑤', player: '⑥', standings: '⑦',
+    facts: '⑧', '101': '⑨', chat: '⑩', notif: '⑪'
+  };
+
+  function goTo(name) {
+    document.querySelectorAll('.scr').forEach(function(s) { s.classList.remove('on'); });
+    document.querySelectorAll('.np').forEach(function(p) { p.classList.remove('on'); });
+    var scr = document.getElementById('s-' + name);
+    if (scr) scr.classList.add('on');
+    var num = screenNumMap[name];
+    if (num) {
+      document.querySelectorAll('.np').forEach(function(p) {
+        if (p.textContent.trim().startsWith(num)) p.classList.add('on');
+      });
+    }
+    var sa = document.querySelector('#s-' + name + ' .sa');
+    if (sa) sa.scrollTop = 0;
+  }
+
+  // Delegate all data-goto clicks inside phone
+  document.querySelector('.pscreen').addEventListener('click', function(e) {
+    var el = e.target.closest('[data-goto]');
+    if (el) goTo(el.getAttribute('data-goto'));
+  });
+
+  // Top nav pills
+  document.querySelectorAll('.np[data-screen]').forEach(function(pill) {
+    pill.addEventListener('click', function() { goTo(this.getAttribute('data-screen')); });
+  });
+
+  // ── ONBOARDING ────────────────────────────────────────
+  document.querySelectorAll('[data-ob]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var step = parseInt(this.getAttribute('data-ob'));
+      document.querySelectorAll('.ob-step').forEach(function(s) { s.classList.remove('on'); });
+      var el = document.getElementById('ob' + step);
+      if (el) el.classList.add('on');
+    });
+  });
+
+  // Team toggle in onboarding
+  document.querySelectorAll('.ob2-team').forEach(function(t) {
+    t.addEventListener('click', function() { this.classList.toggle('sel'); });
+  });
+
+  // Toggle switches
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('tog')) e.target.classList.toggle('on');
+    if (e.target.classList.contains('tch')) e.target.classList.toggle('sel');
+  });
+
+  // ── MATCH TABS ────────────────────────────────────────
+  document.querySelectorAll('.mt[data-mt]').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.mt').forEach(function(t) { t.classList.remove('on'); t.classList.add('off'); });
+      this.classList.add('on'); this.classList.remove('off');
+      ['mt-ev','mt-st','mt-lu','mt-co'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+      var map = { ev: 'mt-ev', st: 'mt-st', lu: 'mt-lu', co: 'mt-co' };
+      var target = document.getElementById(map[this.getAttribute('data-mt')]);
+      if (target) target.style.display = 'block';
+      var msa = document.getElementById('msa');
+      if (msa) msa.scrollTop = 0;
+    });
+  });
+
+  // ── PLAYER TABS ───────────────────────────────────────
+  document.querySelectorAll('.pt[data-pt]').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.pt').forEach(function(t) { t.classList.remove('on'); t.classList.add('off'); });
+      this.classList.add('on'); this.classList.remove('off');
+      ['pt-bio','pt-career','pt-pfacts'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+      var map = { bio: 'pt-bio', career: 'pt-career', pfacts: 'pt-pfacts' };
+      var target = document.getElementById(map[this.getAttribute('data-pt')]);
+      if (target) target.style.display = 'block';
+    });
+  });
+
+  // ── PLAYER SWITCHER ───────────────────────────────────
+  document.getElementById('player-switch').addEventListener('click', function(e) {
+    var chip = e.target.closest('[data-player]');
+    if (!chip) return;
+    var id = chip.getAttribute('data-player');
+    var p = PLAYERS[id];
+    if (!p) return;
+
+    document.querySelectorAll('.ps-chip').forEach(function(c) { c.classList.remove('on'); c.classList.add('off'); });
+    chip.classList.add('on'); chip.classList.remove('off');
+
+    document.getElementById('p-avatar').textContent = p.avatar;
+    document.getElementById('p-name').textContent = p.name;
+    document.getElementById('p-sub').textContent = p.sub;
+    var posEl = document.getElementById('p-pos');
+    posEl.textContent = p.pos;
+    posEl.style.background = p.posBg;
+    posEl.style.color = p.posClr;
+    document.getElementById('p-g').textContent = p.g;
+    document.getElementById('p-a').textContent = p.a;
+    document.getElementById('p-r').textContent = p.r;
+    document.getElementById('p-wc').textContent = p.wc;
+    document.getElementById('pr-age').innerHTML = '<span class="bc-key">Age</span><span class="bc-val">' + p.age + '</span>';
+    document.getElementById('pr-club').innerHTML = '<span class="bc-key">Club</span><span class="bc-val">' + p.club + '</span>';
+    document.getElementById('pr-born').innerHTML = '<span class="bc-key">Born</span><span class="bc-val">' + p.born + '</span>';
+    document.getElementById('pr-caps').innerHTML = '<span class="bc-key">Caps</span><span class="bc-val">' + p.caps + '</span>';
+    document.getElementById('pr-foot').innerHTML = '<span class="bc-key">Foot</span><span class="bc-val">' + p.foot + '</span>';
+    document.getElementById('p-about').textContent = p.about;
+
+    p.career.forEach(function(c, i) {
+      var el = document.getElementById('c' + (i + 1));
+      if (el) el.innerHTML = '<div class="ci-year">' + c[0] + '</div><div class="ci-ico">' + c[1] + '</div><div><div class="ci-ttl">' + c[2] + '</div><div class="ci-sub">' + c[3] + '</div></div>';
+    });
+    p.facts.forEach(function(f, i) {
+      var el = document.getElementById('pf' + (i + 1) + 't');
+      if (el) el.innerHTML = f;
+    });
+
+    // Reset to bio tab
+    document.querySelectorAll('.pt').forEach(function(t, i) {
+      t.classList.toggle('on', i === 0);
+      t.classList.toggle('off', i !== 0);
+    });
+    ['pt-bio','pt-career','pt-pfacts'].forEach(function(id, i) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = i === 0 ? 'block' : 'none';
+    });
+    var psa = document.getElementById('psa');
+    if (psa) psa.scrollTop = 0;
+  });
+
+  // ── SOCCER 101 ACCORDION (new rcard style) ───────────
+  document.querySelectorAll('.rcard').forEach(function(card) {
+    card.addEventListener('click', function() {
+      var isOpen = this.classList.contains('open');
+      document.querySelectorAll('.rcard').forEach(function(c) {
+        c.classList.remove('open');
+        c.querySelector('.rcard-chev').textContent = '▼';
+      });
+      if (!isOpen) {
+        this.classList.add('open');
+        this.querySelector('.rcard-chev').textContent = '▲';
+      }
+    });
+  });
+
+  // ── LIVE MINUTE COUNTER ───────────────────────────────
+  var liveMin = 67;
+  setInterval(function() {
+    liveMin++;
+    ['lm1','lm2','lm3'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = liveMin + "'";
+    });
+  }, 60000);
+
+  // ── AI CHAT ───────────────────────────────────────────
+  var chatHistory = [];
+  var msgsEl = document.getElementById('chatMsgs');
+  var ciEl = document.getElementById('ci');
+  var sendBtnEl = document.getElementById('sendBtn');
+
+  function addMsg(text, role) {
+    var w = document.createElement('div');
+    w.className = 'msg msg-' + role;
+    var b = document.createElement('div');
+    b.className = 'bubble';
+    b.textContent = text;
+    var m = document.createElement('div');
+    m.className = 'msg-meta';
+    m.textContent = role === 'user' ? 'You · now' : 'SOCCER101 AI · now';
+    w.appendChild(b);
+    w.appendChild(m);
+    msgsEl.appendChild(w);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+    return w;
+  }
+
+  function addThinking() {
+    var w = document.createElement('div');
+    w.className = 'msg msg-a thinking';
+    var b = document.createElement('div');
+    b.className = 'bubble';
+    b.textContent = '⚽ Thinking…';
+    w.appendChild(b);
+    msgsEl.appendChild(w);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+    return w;
+  }
+
+  function sendChat(q) {
+    var question = q || ciEl.value.trim();
+    if (!question) return;
+    ciEl.value = '';
+    ciEl.style.height = 'auto';
+    sendBtnEl.disabled = true;
+    addMsg(question, 'user');
+    var thinking = addThinking();
+
+    fetch('https://soccer101-backend-production.up.railway.app/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: question, history: chatHistory.slice(-10) })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      thinking.remove();
+      var reply = data.reply || data.error || 'Try again! ⚽';
+      addMsg(reply, 'ai');
+      chatHistory.push({ role: 'user', content: question });
+      chatHistory.push({ role: 'assistant', content: reply });
+      if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+    })
+    .catch(function() {
+      thinking.remove();
+      addMsg("Can't connect right now — try again in a sec. ⚽", 'ai');
+    })
+    .finally(function() {
+      sendBtnEl.disabled = false;
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+    });
+  }
+
+  sendBtnEl.addEventListener('click', function() { sendChat(); });
+
+  ciEl.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+  });
+
+  ciEl.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 72) + 'px';
+  });
+
+  document.querySelectorAll('.sg[data-sugg]').forEach(function(sg) {
+    sg.addEventListener('click', function() { sendChat(this.getAttribute('data-sugg')); });
+  });
+
+})();
+</script>
+</body>
+</html>
