@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="manifest" href="/soccer101-app/manifest.json">
+<meta name="theme-color" content="#e63946">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SOCCER101">
+<link rel="apple-touch-icon" href="/soccer101-app/icon-192.png">
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/soccer101-app/sw.js')
+        .then(r => console.log('✅ PWA aktif'))
+        .catch(e => console.error('❌ SW hatası:', e));
+    });
+  }
+</script>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>SOCCER101 — World Cup 2026</title>
